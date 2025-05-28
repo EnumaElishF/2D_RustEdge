@@ -14,6 +14,12 @@ public class Player : MonoBehaviour
     private bool isMoving;
     private bool inputDisable; //玩家不能操作
 
+    //动画使用工具
+    private float mouseX;
+    private float mouseY;
+
+    private bool useTool;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -43,12 +49,63 @@ public class Player : MonoBehaviour
 
     }
 
-    private void OnMouseClickedEvent(Vector3 pos, ItemDetails itemDetails)
+    private void OnMouseClickedEvent(Vector3 mouseWorldPos, ItemDetails itemDetails)
     {
-        //ToDO 执行动画
-        //防止还没举起斧子，树就倒了，这种情况。所以事件控制 物品变化的执行，要在角色动画之后
-        EventHandler.CallExecuteActionAfterAnimation(pos, itemDetails); //因为很多动作都涉及到修改动作信息，所以对ExecuteActionAfterAnimation调用，放在GridMapManager
+        //！执行动画   itemDetails.itemTypep排除种子，商品，家具
+        if (itemDetails.itemType!=ItemType.Seed&&itemDetails.itemType!=ItemType.Commodity&& itemDetails.itemType != ItemType.Furniture)
+        {
+            mouseX = mouseWorldPos.x - transform.position.x;
+            mouseY = mouseWorldPos.y - transform.position.y;
+
+            //X的差值，大于Y的差值 :鼠标横向坐标的偏移，会远远大于纵向的离人物的距离；就需要优先判断左右这种情况。  
+            //反之，判断上下
+            if (Mathf.Abs(mouseX) > Mathf.Abs(mouseY))
+            {
+                //这样只传递一个方向的动画，让我们的Blend Tree 知道怎么变化动作
+                mouseY = 0;
+            }
+            else
+            {
+                mouseX = 0;
+            }
+            StartCoroutine(UseToolRoutinue(mouseWorldPos, itemDetails));
+        }
+        else
+        {
+            //种子，商品，家具直接在地面生成
+            //防止还没举起斧子，树就倒了，这种情况。所以事件控制 物品变化的执行，要在角色动画之后
+            EventHandler.CallExecuteActionAfterAnimation(mouseWorldPos, itemDetails); //因为很多动作都涉及到修改动作信息，所以对ExecuteActionAfterAnimation调用，放在GridMapManager
+        }
     }
+    /// <summary>
+    /// 协程：动画执行过程中，触发一个真实的地面产生不同的效果
+    /// </summary>
+    /// <param name="mouseWorldPos"></param>
+    /// <param name="itemDetails"></param>
+    /// <returns></returns>
+    private IEnumerator UseToolRoutinue(UnityEngine.Vector3 mouseWorldPos,ItemDetails itemDetails)
+    {
+        useTool = true;
+        inputDisable = true;
+        yield return null;
+        foreach(var anim in animators)
+        {
+            anim.SetTrigger("useTool");
+            //人物的面朝方向
+            anim.SetFloat("InputX", mouseX);
+            anim.SetFloat("InputY", mouseY);
+        }
+        yield return new WaitForSeconds(0.45f);
+        EventHandler.CallExecuteActionAfterAnimation(mouseWorldPos, itemDetails);
+        yield return new WaitForSeconds(0.25f);
+
+        //等待动画结束
+        useTool = false;
+        inputDisable = false;
+    }
+
+
+
     private void OnMoveToPosition(Vector3 targetPosition)
     {
         transform.position = targetPosition;
@@ -119,6 +176,8 @@ public class Player : MonoBehaviour
         foreach( var anim in animators)
         {
             anim.SetBool("isMoving", isMoving);
+            anim.SetFloat("mouseX", mouseX);
+            anim.SetFloat("mouseY", mouseY);
             if (isMoving)
             {
                 anim.SetFloat("InputX", inputX);

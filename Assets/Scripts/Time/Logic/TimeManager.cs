@@ -43,6 +43,13 @@ public class TimeManager : MonoBehaviour
                 UpdateGameTime();
             }
         }
+        //G快速加天数
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            gameDay++;
+            EventHandler.CallGameDayEvent(gameDay, gameSeason);
+            EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
+        }
     }
     private void NewGameTime()
     {
@@ -94,6 +101,8 @@ public class TimeManager : MonoBehaviour
                                 gameYear = 2025;
                             }
                         }
+                        //对每天的变化，需要刷新地图：用来刷新地图和农作物生长
+                        EventHandler.CallGameDayEvent(gameDay, gameSeason);
                     }
                 }
                 //日期变化

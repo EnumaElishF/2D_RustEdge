@@ -47,6 +47,15 @@ public static class EventHandler
         GameMinuteEvent?.Invoke(minute, hour);
     }
     /// <summary>
+    /// 每日记录
+    /// </summary>
+    public static event Action<int, Season> GameDayEvent;
+    public static void CallGameDayEvent(int day,Season season)
+    {
+        GameDayEvent?.Invoke(day, season);   
+    }
+
+    /// <summary>
     /// 时间和季节：小时，日，月，年，季节
     /// </summary>
     public static event Action<int,int, int, int, Season> GameDateEvent;

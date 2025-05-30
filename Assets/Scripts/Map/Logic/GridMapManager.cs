@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
@@ -20,6 +21,8 @@ namespace Farm.Map
         [Header("地图信息")]
         public List<MapData_SO> mapDataList;
 
+        private Season currentSeason;
+
 
 
         //场景名称+坐标和对应的瓦片信息 （key是场景坐标+名字，例如：x坐标y坐标01Field )(value是TileDetails)
@@ -31,6 +34,7 @@ namespace Farm.Map
         {
             EventHandler.ExecuteActionAfterAnimation += OnExecuteActionAfterAnimation;
             EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
+            EventHandler.GameDayEvent += OnGameDayEvent;
         }
 
 
@@ -38,6 +42,8 @@ namespace Farm.Map
         {
             EventHandler.ExecuteActionAfterAnimation -= OnExecuteActionAfterAnimation;
             EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
+            EventHandler.GameDayEvent -= OnGameDayEvent;
+
 
         }
 
@@ -46,6 +52,31 @@ namespace Farm.Map
             currentGrid = FindAnyObjectByType<Grid>();
             digTilemap = GameObject.FindWithTag("Dig").GetComponent<Tilemap>();
             waterTilemap = GameObject.FindWithTag("Water").GetComponent<Tilemap>();
+
+            //DisplayMap(SceneManager.GetActiveScene().name);
+            RefreshMap();
+        }
+        private void OnGameDayEvent(int day, Season season)
+        {
+            currentSeason = season;
+            foreach (var tile in tileDetailsDict)
+            {
+                if (tile.Value.daySinceWatered > -1)
+                {
+                    tile.Value.daySinceWatered = -1;
+                }
+                if (tile.Value.daySinceDug > -1)
+                {
+                    tile.Value.daySinceDug++;
+                }
+                //超期清除挖坑
+                if(tile.Value.daySinceDug>5 && tile.Value.seedItemID == -1)
+                {
+                    tile.Value.daySinceDug = -1;
+                    tile.Value.canDig = true;
+                }
+            }
+            RefreshMap();
         }
 
         private void Start()
@@ -159,6 +190,7 @@ namespace Farm.Map
                         //音效
                         break;
                 }
+                UpdateTileDetails(currentTile);
             }
         }
         /// <summary>
@@ -183,6 +215,55 @@ namespace Farm.Map
             if (waterTilemap != null)
             {
                 waterTilemap.SetTile(pos, waterTile);
+            }
+        }
+
+        /// <summary>
+        /// 更新瓦片信息
+        /// </summary>
+        /// <param name="tileDetails"></param>
+        private void UpdateTileDetails(TileDetails tileDetails)
+        {
+            string key = tileDetails.gridX + "x" + tileDetails.gridY + "y" + SceneManager.GetActiveScene().name;
+            if (tileDetailsDict.ContainsKey(key))
+            {
+                tileDetailsDict[key] = tileDetails;
+            }
+        }
+        /// <summary>
+        /// 刷新当前地图
+        /// </summary>
+        private void RefreshMap()
+        {
+            if (digTilemap != null)
+                digTilemap.ClearAllTiles();//使用自带的方法直接Clear瓦片
+            if (waterTilemap != null)
+                waterTilemap.ClearAllTiles();
+
+            DisplayMap(SceneManager.GetActiveScene().name);
+        }
+        /// <summary>
+        /// 显示地图瓦片
+        /// </summary>
+        /// <param name="sceneName">场景名称</param>
+        private void DisplayMap(string sceneName)
+        {
+            foreach(var tile in tileDetailsDict)
+            {
+                var key = tile.Key;
+                var tileDetails = tile.Value;
+                if (key.Contains(sceneName))
+                {
+                    if (tileDetails.daySinceDug > -1)
+                    {
+                        SetDigGround(tileDetails);
+                    }
+                    if (tileDetails.daySinceWatered > -1)
+                    {
+                        SetWaterGround(tileDetails);
+                    }
+                    //种子
+                }
             }
         }
     }

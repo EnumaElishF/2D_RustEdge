@@ -48,6 +48,7 @@ public class AnimatorOverride : MonoBehaviour
             ItemType.Seed => PartType.Carry,
             ItemType.Commodity => PartType.Carry,
             ItemType.HoeTool => PartType.Hoe,
+            ItemType.WaterTool => PartType.Water,
             _=> PartType.None
          };
         if (isSelected == false)

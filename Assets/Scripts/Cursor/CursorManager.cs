@@ -191,6 +191,7 @@ public class CursorManager : MonoBehaviour
 
         if (currentTile != null)
         {
+            //WORKFLOW: 补充所有物品类型的判断
             switch (currentItem.itemType)
             {
                 case ItemType.Commodity:
@@ -200,6 +201,10 @@ public class CursorManager : MonoBehaviour
                     Debug.Log("可用吗" + currentTile);
                     if (currentTile.canDig) SetCursorValid(); else SetCursorInValid();
                     break;
+                case ItemType.WaterTool:
+                    if (currentTile.daySinceDug > -1 && currentTile.daySinceWatered == -1) SetCursorValid(); else SetCursorInValid();
+                    break;
+
 
             }
         }

@@ -26,11 +26,11 @@ public enum InventoryLocation
     Player,Box
 }
 /// <summary>
-/// 物体的类型。None是空，什么也没有拿。Carry举起，Hoe工具挖掘，Break击碎
+/// 物体的类型。None是空，什么也没有拿。Carry举起，Hoe工具挖掘，Break击碎,
 /// </summary>
 public enum PartType
 {
-    None,Carry,Hoe,Break,
+    None, Carry, Hoe, Break, Water, Chop, Collect, Reap
 }
 /// <summary>
 /// 身体部分

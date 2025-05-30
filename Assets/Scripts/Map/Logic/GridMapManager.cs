@@ -153,6 +153,11 @@ namespace Farm.Map
                         currentTile.canDropItem = false;
                         //“Ù–ß
                         break;
+                    case ItemType.WaterTool:
+                        SetWaterGround(currentTile);
+                        currentTile.daySinceWatered = 0;
+                        //“Ù–ß
+                        break;
                 }
             }
         }
@@ -177,7 +182,7 @@ namespace Farm.Map
             Vector3Int pos = new Vector3Int(tile.gridX, tile.gridY, 0);
             if (waterTilemap != null)
             {
-                waterTilemap.SetTile(pos, digTile);
+                waterTilemap.SetTile(pos, waterTile);
             }
         }
     }

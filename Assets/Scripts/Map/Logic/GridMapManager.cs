@@ -171,9 +171,12 @@ namespace Farm.Map
 
             if (currentTile != null)
             {
-                //WORLKFLOW 物品使用实际功能
+                // TODO: 物品使用实际功能 +按需增加
                 switch (itemDetails.itemType)
                 {
+                    case ItemType.Seed:
+                        EventHandler.CallPlantSeedEvent(itemDetails.itemID, currentTile); //更新农作物
+                        break;
                     case ItemType.Commodity:
                         EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos); //生成物品（物品实例化）
                         break;

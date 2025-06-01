@@ -113,4 +113,10 @@ public static class EventHandler
         ExecuteActionAfterAnimation?.Invoke(pos, itemDetails);
     }
 
+    //更新当前场景的农作物
+    public static event Action<int, TileDetails> PlantSeedEvent;
+    public static void CallPlantSeedEvent(int ID,TileDetails tile)
+    {
+        PlantSeedEvent?.Invoke(ID, tile);
+    }
 }

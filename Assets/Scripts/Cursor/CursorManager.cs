@@ -187,18 +187,25 @@ public class CursorManager : MonoBehaviour
 
         //Debug.Log("WorldPos:" + mouseWorldPos + "   GridPos" + mouseGridPos);
         TileDetails currentTile = GridMapManager.Instance.GetTileDetailsOnMousePosition(mouseGridPos);
-        Debug.Log("itemType" + currentItem.itemType);
+        //Debug.Log("itemType" + currentItem.itemType);
 
         if (currentTile != null)
         {
             //WORKFLOW: 补充所有物品类型的判断
             switch (currentItem.itemType)
             {
+                case ItemType.Seed:
+                    if (currentTile.daySinceDug > -1 && currentTile.seedItemID == -1)
+                    { //挖坑时间要大于-1，有挖坑；种子为-1，就是不能已经有其他种子
+                        //Debug.Log("鼠标通过" + currentTile);
+                        SetCursorValid(); 
+                    }
+                    else SetCursorInValid();
+                    break;
                 case ItemType.Commodity:
                     if (currentTile.canDropItem && currentItem.canDropped) SetCursorValid(); else SetCursorInValid(); //商品能扔就鼠标可用
                     break;
                 case ItemType.HoeTool:
-                    Debug.Log("可用吗" + currentTile);
                     if (currentTile.canDig) SetCursorValid(); else SetCursorInValid();
                     break;
                 case ItemType.WaterTool:

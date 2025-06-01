@@ -200,11 +200,8 @@ namespace Farm.Map
                         break;
                     case ItemType.CollectTool:
                         Crop currentCrop = GetCropObject(mouseWorldPos);
-                        //TODO Ö´ÐÐÊÕ¸îÂß¼­
-                        if (currentCrop != null)
-                        {
-                            Debug.Log(currentCrop.cropDetails.seedItemID);
-                        }
+                        // Ö´ÐÐÊÕ¸îÂß¼­
+                        currentCrop.ProcessToolAction(itemDetails);
                         break;
                 }
                 UpdateTileDetails(currentTile);

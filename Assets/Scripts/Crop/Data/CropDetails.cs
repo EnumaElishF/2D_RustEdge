@@ -51,10 +51,42 @@ public class CropDetails
     public int regrowTimes;
 
     [Header("Options")]
-    public bool generateAtPlayPosition;
+    public bool generateAtPlayPosition; //在头顶生成
     public bool hasAnimation;
     public bool hasParticalEffect;
     //TODO: 特效音效 等
 
 
+    /// <summary>
+    /// 检查当前工具是否可以使用
+    /// </summary>
+    /// <param name="toolID">工具id</param>
+    /// <returns></returns>
+    public bool CheckToolAvailable(int toolID)
+    {
+        foreach(var tool in harvestToolItemID)
+        {
+            if(tool == toolID)
+            {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 获取工具需要使用的次数
+    /// </summary>
+    /// <param name="toolID">工具ID</param>
+    /// <returns></returns>
+    public int GetTotalRequireCount(int toolID)
+    {
+        for (int i = 0; i < harvestToolItemID.Length; i++)
+        {
+            if (harvestToolItemID[i] == toolID)
+                return requireActionCount[i];
+        }
+        return -1;
+    }
 }

@@ -212,8 +212,12 @@ public class CursorManager : MonoBehaviour
                 case ItemType.CollectTool:
                     if (currentCrop != null)
                     {
-                        //要在此格子上生长的日期大于设定的植物成长总日期，才能再点击
-                        if (currentTile.growthDays >= currentCrop.TotalGrowthDays) SetCursorValid(); else SetCursorInValid(); 
+                        if (currentCrop.CheckToolAvailable(currentItem.itemID))
+                        {
+                            //要在此格子上生长的日期大于设定的植物成长总日期，才能再点击
+                            if (currentTile.growthDays >= currentCrop.TotalGrowthDays) SetCursorValid(); else SetCursorInValid();
+                        }
+
 
                     }else
                         SetCursorInValid(); //没有种子

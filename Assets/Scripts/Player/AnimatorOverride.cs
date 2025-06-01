@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Farm.Inventory;
 using UnityEngine;
 
 public class AnimatorOverride : MonoBehaviour
@@ -25,12 +26,36 @@ public class AnimatorOverride : MonoBehaviour
     {
         EventHandler.ItemSelectedEvent += OnItemSelectEvent;
         EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
+        EventHandler.HarvestAtPlayerPosition += OnHarvestAtPlayerPosition;
     }
     private void OnDisable()
     {
         EventHandler.ItemSelectedEvent -= OnItemSelectEvent;
         EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
+        EventHandler.HarvestAtPlayerPosition -= OnHarvestAtPlayerPosition;
 
+
+    }
+    /// <summary>
+    /// 场景上生成物品,生成到角色头顶
+    /// </summary>
+    /// <param name="ID"></param>
+    private void OnHarvestAtPlayerPosition(int ID)
+    {
+        Sprite itemSprite = InventoryManager.Instance.GetItemDetails(ID).itemOnWorldSprite;
+        holdItem.enabled = true;
+        if(holdItem.enabled == false)
+        {
+            StartCoroutine(ShowItem(itemSprite));
+        }
+    }
+
+    private IEnumerator ShowItem(Sprite itemSprite)
+    {
+        holdItem.sprite = itemSprite;
+        holdItem.enabled = true;
+        yield return new WaitForSeconds(1f);
+        holdItem.enabled = false;
     }
 
     private void OnBeforeSceneUnloadEvent()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 //所有和背包数据有关的内容和物品都放在这个同一个命名空间中Farm.Inventory;除非代码使用using Farm.Inventory,否则无法调用
 //继承Singleton实现单例
@@ -17,10 +18,13 @@ namespace Farm.Inventory
         private void OnEnable()
         {
             EventHandler.DropItemEvent += OnDropItemEvent;
+            EventHandler.HarvestAtPlayerPosition += OnHarvestAtPlayerPosition;
         }
         private void OnDisable()
         {
             EventHandler.DropItemEvent -= OnDropItemEvent;
+            EventHandler.HarvestAtPlayerPosition -= OnHarvestAtPlayerPosition;
+
         }
 
 
@@ -39,6 +43,21 @@ namespace Farm.Inventory
         private void OnDropItemEvent(int ID, Vector3 pos, ItemType itemType)
         {
             RemoveItem(ID, 1);
+        }
+
+        /// <summary>
+        /// 背包生成物品
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        private void OnHarvestAtPlayerPosition(int ID)
+        {
+            //是否已经有该物品
+            var index = GetItemIndexInBag(ID);
+            //添加物品
+            AddItemAtIndex(ID, index, 1);
+            //更新ui
+            EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
         }
 
         /// <summary>

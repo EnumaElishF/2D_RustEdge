@@ -1,6 +1,4 @@
-using NUnit.Framework;
-using System.Collections;
-using System.Collections.Generic;
+using Farm.CropPlant;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -149,7 +147,7 @@ public class CursorManager : MonoBehaviour
         else
         {
             currentItem = itemDetails;
-            //WORKFLOW: 添加所有类型对应图片
+            // WORKFLOW: 添加所有类型对应图片
             currentSprite = itemDetails.itemType switch
             {
                 ItemType.Seed => seed,
@@ -160,6 +158,7 @@ public class CursorManager : MonoBehaviour
                 ItemType.BreakTool => tool,
                 ItemType.ReapTool => tool,
                 ItemType.Furniture => tool,
+                ItemType.CollectTool => tool,
                 _ => normal
             };
             cursorEnable = true;
@@ -185,13 +184,12 @@ public class CursorManager : MonoBehaviour
             return;
         }
 
-        //Debug.Log("WorldPos:" + mouseWorldPos + "   GridPos" + mouseGridPos);
         TileDetails currentTile = GridMapManager.Instance.GetTileDetailsOnMousePosition(mouseGridPos);
-        //Debug.Log("itemType" + currentItem.itemType);
 
         if (currentTile != null)
         {
-            //WORKFLOW: 补充所有物品类型的判断
+            CropDetails currentCrop = CropManager.Instance.GetCropDetails(currentTile.seedItemID);
+            // WORKFLOW: 补充所有物品类型的判断
             switch (currentItem.itemType)
             {
                 case ItemType.Seed:
@@ -210,6 +208,15 @@ public class CursorManager : MonoBehaviour
                     break;
                 case ItemType.WaterTool:
                     if (currentTile.daySinceDug > -1 && currentTile.daySinceWatered == -1) SetCursorValid(); else SetCursorInValid();
+                    break;
+                case ItemType.CollectTool:
+                    if (currentCrop != null)
+                    {
+                        //要在此格子上生长的日期大于设定的植物成长总日期，才能再点击
+                        if (currentTile.growthDays >= currentCrop.TotalGrowthDays) SetCursorValid(); else SetCursorInValid(); 
+
+                    }else
+                        SetCursorInValid(); //没有种子
                     break;
 
 

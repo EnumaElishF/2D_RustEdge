@@ -176,7 +176,7 @@ namespace Farm.Map
 
             if (currentTile != null)
             {
-                // TODO: 物品使用实际功能 +按需增加
+                // WORKFLOW : 物品使用实际功能 +按需增加
                 switch (itemDetails.itemType)
                 {
                     case ItemType.Seed:
@@ -198,9 +198,33 @@ namespace Farm.Map
                         currentTile.daySinceWatered = 0;
                         //音效
                         break;
+                    case ItemType.CollectTool:
+                        Crop currentCrop = GetCropObject(mouseWorldPos);
+                        //TODO 执行收割逻辑
+                        if (currentCrop != null)
+                        {
+                            Debug.Log(currentCrop.cropDetails.seedItemID);
+                        }
+                        break;
                 }
                 UpdateTileDetails(currentTile);
             }
+        }
+        /// <summary>
+        /// 通过物理方法判断鼠标点击位置的农作物
+        /// </summary>
+        /// <param name="mouseWorldPos">鼠标坐标</param>
+        /// <returns></returns>
+        private Crop GetCropObject(Vector3 mouseWorldPos)
+        {
+            Collider2D[] colliders = Physics2D.OverlapPointAll(mouseWorldPos);
+            Crop currentCrop = null;
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                if (colliders[i].GetComponent<Crop>())
+                    currentCrop = colliders[i].GetComponent<Crop>();
+            }
+            return currentCrop;
         }
         /// <summary>
         /// 显示挖坑瓦片

@@ -4,8 +4,13 @@ using UnityEngine;
 
 namespace Farm.CropPlant
 {
-    public class CropManager : MonoBehaviour
+    /// <summary>
+    /// 单例模式确保整个游戏中只有一个CropManager实例，并且任何脚本都可以通过CropManager.Instance轻松访问它。
+    /// 这避免了通过FindObjectOfType或手动引用查找管理器的开销，提高了代码效率。
+    /// </summary>
+    public class CropManager : Singleton<CropManager> //改成单例模式，方便其他调用
     {
+        //
         public CropDataList_SO cropData;
         private Transform cropParent;
         private Grid currentGrid;
@@ -95,13 +100,15 @@ namespace Farm.CropPlant
 
             //为生成的农作物，赋予图片
             cropInstance.GetComponentInChildren<SpriteRenderer>().sprite = cropSprite;
+
+            cropInstance.GetComponent<Crop>().cropDetails = cropDetails;
         }
         /// <summary>
         /// 通过物品ID查找种子信息
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        private CropDetails GetCropDetails(int ID)
+        public CropDetails GetCropDetails(int ID)
         {
             return cropData.cropDetailsList.Find(c => c.seedItemID == ID);
         }

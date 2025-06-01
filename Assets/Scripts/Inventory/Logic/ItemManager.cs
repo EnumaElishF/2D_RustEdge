@@ -66,8 +66,10 @@ namespace Farm.Inventory
         /// </summary>
         /// <param name="ID"></param>
         /// <param name="pos"></param>
-        private void OnDropItemEvent(int ID, Vector3 mousePos)
+        private void OnDropItemEvent(int ID, Vector3 mousePos,ItemType itemType)
         {
+            if (itemType == ItemType.Seed) return; //种子不需要执行扔地上的效果
+
             //扔东西的效果
             var item = Instantiate(bounceItemPrefab, PlayerTransform.position, Quaternion.identity, itemParent);
             item.itemID = ID;

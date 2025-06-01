@@ -36,7 +36,7 @@ namespace Farm.Inventory
         /// </summary>
         /// <param name="ID"></param>
         /// <param name="pos"></param>
-        private void OnDropItemEvent(int ID, Vector3 pos)
+        private void OnDropItemEvent(int ID, Vector3 pos, ItemType itemType)
         {
             RemoveItem(ID, 1);
         }

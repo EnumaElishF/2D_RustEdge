@@ -74,6 +74,11 @@ namespace Farm.Map
                 {
                     tile.Value.daySinceDug = -1;
                     tile.Value.canDig = true;
+                    tile.Value.growthDays = -1;
+                }
+                if (tile.Value.growthDays != -1)
+                {
+                    tile.Value.growthDays++;
                 }
             }
             RefreshMap();
@@ -162,8 +167,8 @@ namespace Farm.Map
         /// <summary>
         /// 执行,实际工具或物品的功能
         /// </summary>
-        /// <param name="mouseWorldPos"></param>
-        /// <param name="itemDetails"></param>
+        /// <param name="mouseWorldPos">鼠标坐标</param>
+        /// <param name="itemDetails">物品信息</param>
         private void OnExecuteActionAfterAnimation(Vector3 mouseWorldPos, ItemDetails itemDetails)
         {
             var mouseGridPos = currentGrid.WorldToCell(mouseWorldPos);
@@ -176,9 +181,10 @@ namespace Farm.Map
                 {
                     case ItemType.Seed:
                         EventHandler.CallPlantSeedEvent(itemDetails.itemID, currentTile); //更新农作物
+                        EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos,itemDetails.itemType);
                         break;
                     case ItemType.Commodity:
-                        EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos); //生成物品（物品实例化）
+                        EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos, itemDetails.itemType); //生成物品（物品实例化）
                         break;
                     case ItemType.HoeTool:
                         SetDigGround(currentTile);
@@ -239,9 +245,15 @@ namespace Farm.Map
         private void RefreshMap()
         {
             if (digTilemap != null)
-                digTilemap.ClearAllTiles();//使用自带的方法直接Clear瓦片
+                digTilemap.ClearAllTiles(); // 使用自带的方法直接Clear瓦片
             if (waterTilemap != null)
                 waterTilemap.ClearAllTiles();
+
+            //！ 使用 FindObjectsByType 替代过时的 FindObjectsOfType
+            foreach (var crop in FindObjectsByType<Crop>(FindObjectsSortMode.None))
+            {
+                Destroy(crop.gameObject);
+            }
 
             DisplayMap(SceneManager.GetActiveScene().name);
         }
@@ -266,6 +278,10 @@ namespace Farm.Map
                         SetWaterGround(tileDetails);
                     }
                     //种子
+                    if(tileDetails.seedItemID > -1)
+                    {
+                        EventHandler.CallPlantSeedEvent(tileDetails.seedItemID, tileDetails); 
+                    }
                 }
             }
         }

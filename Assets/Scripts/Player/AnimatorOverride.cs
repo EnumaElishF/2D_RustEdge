@@ -63,6 +63,11 @@ public class AnimatorOverride : MonoBehaviour
                 holdItem.sprite = itemDetails.itemOnWorldSprite;
                 holdItem.enabled = true;
             }
+            else
+            {
+                //如果是非Carry类的物品，他执行的是动画操作，这里应该取消曾举起的物品
+                holdItem.enabled = false;
+            }
         }
         SwitchAnimator(currentType);
     }

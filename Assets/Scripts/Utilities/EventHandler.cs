@@ -113,16 +113,30 @@ public static class EventHandler
         ExecuteActionAfterAnimation?.Invoke(pos, itemDetails);
     }
 
-    //更新当前场景的农作物
+
+    /// <summary>
+    /// 更新当前场景的农作物
+    /// </summary>
     public static event Action<int, TileDetails> PlantSeedEvent;
     public static void CallPlantSeedEvent(int ID,TileDetails tile)
     {
         PlantSeedEvent?.Invoke(ID, tile);
     }
-
+    /// <summary>
+    /// 收割果实
+    /// </summary>
     public static event Action<int> HarvestAtPlayerPosition;
     public static void CallHarvestAtPlayerPosition(int ID)
     {
         HarvestAtPlayerPosition?.Invoke(ID);
+    }
+
+    /// <summary>
+    /// 刷新 作物的当前瓦片
+    /// </summary>
+    public static event Action RefreshCurrentMap;
+    public static void CallRefreshCurrentMap()
+    {
+        RefreshCurrentMap?.Invoke();
     }
 }

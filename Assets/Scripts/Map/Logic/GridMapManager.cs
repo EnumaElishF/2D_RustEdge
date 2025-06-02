@@ -35,6 +35,7 @@ namespace Farm.Map
             EventHandler.ExecuteActionAfterAnimation += OnExecuteActionAfterAnimation;
             EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
             EventHandler.GameDayEvent += OnGameDayEvent;
+            EventHandler.RefreshCurrentMap += RefreshMap;
         }
 
 
@@ -43,6 +44,7 @@ namespace Farm.Map
             EventHandler.ExecuteActionAfterAnimation -= OnExecuteActionAfterAnimation;
             EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
             EventHandler.GameDayEvent -= OnGameDayEvent;
+            EventHandler.RefreshCurrentMap -= RefreshMap;
 
 
         }
@@ -201,7 +203,7 @@ namespace Farm.Map
                     case ItemType.CollectTool:
                         Crop currentCrop = GetCropObject(mouseWorldPos);
                         // 执行收割逻辑
-                        currentCrop.ProcessToolAction(itemDetails);
+                        currentCrop.ProcessToolAction(itemDetails,currentTile);
                         break;
                 }
                 UpdateTileDetails(currentTile);
@@ -262,6 +264,7 @@ namespace Farm.Map
         }
         /// <summary>
         /// 刷新当前地图
+        /// 可以做到刷新作物，重新在这里生长
         /// </summary>
         private void RefreshMap()
         {

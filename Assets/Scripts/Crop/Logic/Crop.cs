@@ -6,11 +6,14 @@ public class Crop : MonoBehaviour
 {
     //执行收割的所有的逻辑
     public CropDetails cropDetails;
+    private TileDetails tileDetails;
     private int harvestActionCount;
 
 
-    public void ProcessToolAction(ItemDetails tool)
+    public void ProcessToolAction(ItemDetails tool,TileDetails tile)
     {
+        tileDetails = tile;
+
         //工具使用次数
         int requireActionCount = cropDetails.GetTotalRequireCount(tool.itemID);
         if (requireActionCount == -1) return;
@@ -56,9 +59,35 @@ public class Crop : MonoBehaviour
             for(int j = 0; j < amountToProduce; j++)
             {
                 if (cropDetails.generateAtPlayPosition)
+                {
                     EventHandler.CallHarvestAtPlayerPosition(cropDetails.producedItemID[i]);
+                }
+                else //世界地图上生成物品
+                {
+
+                }
             }
 
+        }
+        if (tileDetails != null)
+        {
+            tileDetails.daysSinceLastHarvest++;
+
+            //作物是否可以重复生长,重生
+            if(cropDetails.daysToRegrow>0 && tileDetails.daysSinceLastHarvest < cropDetails.regrowTimes)
+            {
+                tileDetails.growthDays = cropDetails.TotalGrowthDays - cropDetails.daysToRegrow;
+                //刷新种子
+                EventHandler.CallRefreshCurrentMap();
+            }
+            else //不可以重复生长
+            {
+                //种子拔出
+                tileDetails.daysSinceLastHarvest = -1;
+                tileDetails.seedItemID = -1;
+                
+            }
+            Destroy(gameObject);
         }
     }
 }

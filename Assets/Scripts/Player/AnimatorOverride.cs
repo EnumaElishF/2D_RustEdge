@@ -43,8 +43,8 @@ public class AnimatorOverride : MonoBehaviour
     private void OnHarvestAtPlayerPosition(int ID)
     {
         Sprite itemSprite = InventoryManager.Instance.GetItemDetails(ID).itemOnWorldSprite;
-        holdItem.enabled = true;
-        if(holdItem.enabled == false)
+        //删除holdItem.enabled = true; 解决
+        if (holdItem.enabled == false)
         {
             StartCoroutine(ShowItem(itemSprite));
         }
@@ -102,9 +102,13 @@ public class AnimatorOverride : MonoBehaviour
     {
         foreach(var item in animatorTypes)
         {
-            if(item.partType == partType)
+            if (item.partType == partType)
             {
                 //切换当时使用的AnimatorController
+                animatorNameDict[item.partName.ToString()].runtimeAnimatorController = item.overrideController;
+            }
+            else if (item.partType == PartType.None)
+            {
                 animatorNameDict[item.partName.ToString()].runtimeAnimatorController = item.overrideController;
             }
         }

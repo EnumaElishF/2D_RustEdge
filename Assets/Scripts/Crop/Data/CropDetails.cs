@@ -51,7 +51,7 @@ public class CropDetails
     public int regrowTimes;
 
     [Header("Options")]
-    public bool generateAtPlayPosition; //在头顶生成
+    public bool generateAtPlayerPosition; //在头顶生成
     public bool hasAnimation;
     public bool hasParticalEffect;
     //TODO: 特效音效 等
@@ -76,7 +76,7 @@ public class CropDetails
     }
 
     /// <summary>
-    /// 获取工具需要使用的次数
+    /// 获取工具需要使用的次数 （写一个根据id查数组里的值)
     /// </summary>
     /// <param name="toolID">工具ID</param>
     /// <returns></returns>

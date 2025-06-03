@@ -200,6 +200,7 @@ namespace Farm.Map
                         currentTile.daySinceWatered = 0;
                         //音效
                         break;
+                    case ItemType.ChopTool: //和CollectTool用一个case
                     case ItemType.CollectTool:
                         Crop currentCrop = GetCropObject(mouseWorldPos);
                         // 执行收割逻辑

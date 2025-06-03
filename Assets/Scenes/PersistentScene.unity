@@ -321,6 +321,9 @@ MonoBehaviour:
   - partType: 4
     partName: 3
     overrideController: {fileID: 22100000, guid: 6fbb5bb2980700a42a0f4915095ad30a, type: 2}
+  - partType: 5
+    partName: 3
+    overrideController: {fileID: 22100000, guid: c476e6ea87744994eb2e0353b5714137, type: 2}
   - partType: 0
     partName: 1
     overrideController: {fileID: 22100000, guid: e3e173be94b51f146b205eb0922e65ee, type: 2}

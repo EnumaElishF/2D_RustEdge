@@ -9,32 +9,51 @@ public class Crop : MonoBehaviour
     private TileDetails tileDetails;
     private int harvestActionCount;
 
+    private Animator anim;
+    private Transform PlayerTransform = FindAnyObjectByType<Player>().transform;
+
 
     public void ProcessToolAction(ItemDetails tool,TileDetails tile)
     {
         tileDetails = tile;
 
         //工具使用次数
-        int requireActionCount = cropDetails.GetTotalRequireCount(tool.itemID);
+        int requireActionCount = cropDetails.GetTotalRequireCount(tool.itemID);   
         if (requireActionCount == -1) return;
 
-        //判断是否有动画 树木
+        anim = GetComponentInChildren<Animator>();
 
         //点击计数器
         if (harvestActionCount < requireActionCount)
         {
             harvestActionCount++;
-
+            //判断是否有动画 树木
+            if(anim != null && cropDetails.hasAnimation)
+            {
+                if (PlayerTransform.position.x < transform.position.x)
+                {
+                    //小于代表人在树左侧
+                    anim.SetTrigger("RotateRight");
+                }
+                else
+                {
+                    anim.SetTrigger("RotateLeft");
+                }
+            }
             //播放粒子效果
             //播放声音
         }
 
-        if(harvestActionCount>= requireActionCount)
+        if (harvestActionCount>= requireActionCount)
         {
-            if (cropDetails.generateAtPlayPosition)
+            if (cropDetails.generateAtPlayerPosition)
             {
                 //生成农作物
                 SpawnHarvestItems();
+
+            }
+            else if (cropDetails.hasAnimation)  //有单独的动画，还不勾选generateAtPlayerPosition的
+            {
 
             }
         }
@@ -58,7 +77,7 @@ public class Crop : MonoBehaviour
             //执行生成指定数量的物品
             for(int j = 0; j < amountToProduce; j++)
             {
-                if (cropDetails.generateAtPlayPosition)
+                if (cropDetails.generateAtPlayerPosition)
                 {
                     EventHandler.CallHarvestAtPlayerPosition(cropDetails.producedItemID[i]);
                 }

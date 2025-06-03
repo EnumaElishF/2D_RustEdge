@@ -209,6 +209,7 @@ public class CursorManager : MonoBehaviour
                 case ItemType.WaterTool:
                     if (currentTile.daySinceDug > -1 && currentTile.daySinceWatered == -1) SetCursorValid(); else SetCursorInValid();
                     break;
+                case ItemType.ChopTool:  //与CollectTool执行同一个case
                 case ItemType.CollectTool:
                     if (currentCrop != null)
                     {
@@ -222,7 +223,6 @@ public class CursorManager : MonoBehaviour
                     }else
                         SetCursorInValid(); //没有种子
                     break;
-
 
             }
         }

@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
         if (itemDetails.itemType!=ItemType.Seed&&itemDetails.itemType!=ItemType.Commodity&& itemDetails.itemType != ItemType.Furniture)
         {
             mouseX = mouseWorldPos.x - transform.position.x;
-            mouseY = mouseWorldPos.y - transform.position.y;
+            mouseY = mouseWorldPos.y - (transform.position.y + 0.85f);
 
             //X的差值，大于Y的差值 :鼠标横向坐标的偏移，会远远大于纵向的离人物的距离；就需要优先判断左右这种情况。  
             //反之，判断上下

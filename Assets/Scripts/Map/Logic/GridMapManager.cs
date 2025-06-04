@@ -78,7 +78,7 @@ namespace Farm.Map
                     tile.Value.canDig = true;
                     tile.Value.growthDays = -1;
                 }
-                if (tile.Value.growthDays != -1)
+                if (tile.Value.seedItemID != -1)
                 {
                     tile.Value.growthDays++;
                 }
@@ -146,7 +146,7 @@ namespace Farm.Map
         /// </summary>
         /// <param name="key">x+y+地图名字</param>
         /// <returns></returns>
-        private TileDetails GetTileDetails(string key)
+        public TileDetails GetTileDetails(string key)
         {
             if (tileDetailsDict.ContainsKey(key))
             {
@@ -178,6 +178,8 @@ namespace Farm.Map
 
             if (currentTile != null)
             {
+                Crop currentCrop = GetCropObject(mouseWorldPos);
+
                 // WORKFLOW : 物品使用实际功能 +按需增加
                 switch (itemDetails.itemType)
                 {
@@ -200,9 +202,11 @@ namespace Farm.Map
                         currentTile.daySinceWatered = 0;
                         //音效
                         break;
-                    case ItemType.ChopTool: //和CollectTool用一个case
+                    case ItemType.ChopTool:
+                        // 执行收割逻辑   :?.做防currentCrop点击为空处理
+                        currentCrop?.ProcessToolAction(itemDetails, currentCrop.tileDetails);
+                        break;
                     case ItemType.CollectTool:
-                        Crop currentCrop = GetCropObject(mouseWorldPos);
                         // 执行收割逻辑
                         currentCrop.ProcessToolAction(itemDetails,currentTile);
                         break;
@@ -215,7 +219,7 @@ namespace Farm.Map
         /// </summary>
         /// <param name="mouseWorldPos">鼠标坐标</param>
         /// <returns></returns>
-        private Crop GetCropObject(Vector3 mouseWorldPos)
+        public Crop GetCropObject(Vector3 mouseWorldPos)
         {
             Collider2D[] colliders = Physics2D.OverlapPointAll(mouseWorldPos);
             Crop currentCrop = null;
@@ -255,7 +259,7 @@ namespace Farm.Map
         /// 更新瓦片信息
         /// </summary>
         /// <param name="tileDetails"></param>
-        private void UpdateTileDetails(TileDetails tileDetails)
+        public void UpdateTileDetails(TileDetails tileDetails)
         {
             string key = tileDetails.gridX + "x" + tileDetails.gridY + "y" + SceneManager.GetActiveScene().name;
             if (tileDetailsDict.ContainsKey(key))

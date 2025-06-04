@@ -119,5 +119,5 @@ MonoBehaviour:
     daysToRegrow: 0
     regrowTimes: 0
     generateAtPlayerPosition: 0
-    hasAnimation: 0
+    hasAnimation: 1
     hasParticalEffect: 0

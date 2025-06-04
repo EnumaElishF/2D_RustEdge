@@ -6,12 +6,18 @@ public class Crop : MonoBehaviour
 {
     //执行收割的所有的逻辑
     public CropDetails cropDetails;
-    private TileDetails tileDetails;
+    public TileDetails tileDetails;
     private int harvestActionCount;
+    public bool CanHarvest => tileDetails.growthDays >= cropDetails.TotalGrowthDays;
 
     private Animator anim;
-    private Transform PlayerTransform = FindAnyObjectByType<Player>().transform;
+    private Transform PlayerTransform;
 
+
+    private void Start()
+    {
+        PlayerTransform = FindAnyObjectByType<Player>().transform;
+    }
 
     public void ProcessToolAction(ItemDetails tool,TileDetails tile)
     {

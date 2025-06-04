@@ -55,7 +55,7 @@ public class CropDetails
     public bool hasAnimation;
     public bool hasParticalEffect;
     //TODO: 特效音效 等
-
+    public ParticalEffectType effectType;
 
     /// <summary>
     /// 检查当前工具是否可以使用

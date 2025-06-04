@@ -52,7 +52,7 @@ public class Crop : MonoBehaviour
 
         if (harvestActionCount>= requireActionCount)
         {
-            if (cropDetails.generateAtPlayerPosition)
+            if (cropDetails.generateAtPlayerPosition || !cropDetails.hasAnimation)
             {
                 //生成农作物
                 SpawnHarvestItems();
@@ -60,11 +60,53 @@ public class Crop : MonoBehaviour
             }
             else if (cropDetails.hasAnimation)  //有单独的动画，还不勾选generateAtPlayerPosition的
             {
-
+                //树倒下的动画
+                if (PlayerTransform.position.x < transform.position.x)
+                {
+                    //小于代表人在树左侧
+                    anim.SetTrigger("FallingRight");
+                }
+                else
+                {
+                    anim.SetTrigger("FallingLeft");
+                }
+                StartCoroutine(HarvestAfterAnimation());
             }
         }
     }
 
+    /// <summary>
+    /// /需要一个持续性的判断,使用协程，树倒下的动画在播放完的时候生成
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator HarvestAfterAnimation()
+    {
+        while (!anim.GetCurrentAnimatorStateInfo(0).IsName("END"))
+        {
+            yield return null;
+        }
+        //符合END了，跳出过循环null，执行收获果实
+        SpawnHarvestItems();
+        //转换新物体
+        if (cropDetails.transferItemID > 0)
+        {
+            CreateTransferCrop();
+        }
+
+    } 
+    private void CreateTransferCrop()
+    {
+        tileDetails.seedItemID = cropDetails.transferItemID;
+        tileDetails.daysSinceLastHarvest = -1;
+        tileDetails.growthDays = 0;
+
+        EventHandler.CallRefreshCurrentMap();
+    }
+
+
+    /// <summary>
+    /// 生成果实
+    /// </summary>
     public void SpawnHarvestItems()
     {
         for(int i = 0; i < cropDetails.producedItemID.Length; i++)
@@ -89,7 +131,13 @@ public class Crop : MonoBehaviour
                 }
                 else //世界地图上生成物品
                 {
+                    //判断应该生成的物品的方向
+                    var dirX = transform.position.x > PlayerTransform.position.x ? 1 : -1;
+                    //一定范围内的随机 :因为这是在for循环里生成，所以每次的spawnPos作为随机的
+                    var spawnPos = new Vector3(transform.position.x + Random.Range(dirX, cropDetails.spawnRadius.x * dirX),
+                    transform.position.y + Random.Range(-cropDetails.spawnRadius.y,cropDetails.spawnRadius.y),0);
 
+                    EventHandler.CallInstantiateItemInScene(cropDetails.producedItemID[i], spawnPos);
                 }
             }
 

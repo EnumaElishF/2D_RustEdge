@@ -57,8 +57,12 @@ namespace Farm.Inventory
         private void OnInstantiateItemInScene(int ID, Vector3 pos)
         {
             //Quaternion.identity 是四元数旋转系统的基础，用于表示 “无旋转” 状态
-            var item = Instantiate(itemPrefab, pos, Quaternion.identity, itemParent);
+            var item = Instantiate(bounceItemPrefab, pos, Quaternion.identity, itemParent);
             item.itemID = ID;
+
+            //实现从高处往下掉落的产生效果
+            item.GetComponent<ItemBounce>().InitBounceItem(pos, Vector3.up);
+
         }
 
         /// <summary>

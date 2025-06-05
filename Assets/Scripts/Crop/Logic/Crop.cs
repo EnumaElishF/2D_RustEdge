@@ -47,6 +47,8 @@ public class Crop : MonoBehaviour
                 }
             }
             //播放粒子效果
+            if(cropDetails.hasParticalEffect) //如果不加hasParticalEffect，判断，那么没有特效的也会调用这个，就会产生报错
+                EventHandler.CalllParticleEffectEvent(cropDetails.effectType, transform.position + cropDetails.effectPos);
             //播放声音
         }
 

@@ -82,7 +82,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.06492019, y: 3.640435}
+  m_Offset: {x: -0.058527946, y: 1.183804}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -92,7 +92,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.7120676, y: 4.1646867}
+  m_Size: {x: 0.9837847, y: 2.7079906}
   m_EdgeRadius: 0
 --- !u!114 &-3260496533555992480
 MonoBehaviour:
@@ -121,9 +121,23 @@ MonoBehaviour:
     spawnRadius: {x: 0, y: 0}
     daysToRegrow: 0
     regrowTimes: 0
-    generateAtPlayPosition: 0
+    generateAtPlayerPosition: 0
     hasAnimation: 0
     hasParticalEffect: 0
+    effectType: 0
+    effectPos: {x: 0, y: 0, z: 0}
+  tileDetails:
+    gridX: 0
+    gridY: 0
+    canDig: 0
+    canDropItem: 0
+    canPlaceFurniture: 0
+    isNPCObstacle: 0
+    daySinceDug: -1
+    daySinceWatered: -1
+    seedItemID: -1
+    growthDays: -1
+    daysSinceLastHarvest: -1
 --- !u!1 &4862363895796601384
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +149,7 @@ GameObject:
   - component: {fileID: 2091731665579502536}
   - component: {fileID: 1950533061587098468}
   - component: {fileID: 1566107296815105053}
+  - component: {fileID: 3808862819691466040}
   m_Layer: 0
   m_Name: Tree02_Top
   m_TagString: Untagged
@@ -221,6 +236,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fb95fc7095bfd0479b0c63a8256411b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &3808862819691466040
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4862363895796601384}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e060bc943a089dc4392aeae9c8ec384a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7256424314289344126
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,7 +378,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.032460332, y: 0.28230143}
+  m_Offset: {x: -0.0045741796, y: 0.20823216}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.45}
@@ -351,7 +388,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.8120677, y: 1.1015921}
+  m_Size: {x: 1.7379987, y: 0.95345354}
   m_EdgeRadius: 0
 --- !u!114 &4010705097383375669
 MonoBehaviour:

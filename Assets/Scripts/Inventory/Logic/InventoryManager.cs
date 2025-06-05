@@ -81,7 +81,7 @@ namespace Farm.Inventory
 
             AddItemAtIndex(item.itemID, index, 1);
 
-            Debug.Log(GetItemDetails(item.itemID).itemID + "Name:" + GetItemDetails(item.itemID).itemName);
+            //Debug.Log(GetItemDetails(item.itemID).itemID + "Name:" + GetItemDetails(item.itemID).itemName);
             if (toDestroy)
             {
                 Destroy(item.gameObject);

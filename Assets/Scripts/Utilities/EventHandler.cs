@@ -139,4 +139,12 @@ public static class EventHandler
     {
         RefreshCurrentMap?.Invoke();
     }
+    /// <summary>
+    /// 播放粒子特效
+    /// </summary>
+    public static event Action<ParticalEffectType,Vector3> ParticleEffectEvent;
+    public static void CalllParticleEffectEvent(ParticalEffectType effectType,Vector3 pos)
+    {
+        ParticleEffectEvent?.Invoke(effectType, pos);
+    }
 }

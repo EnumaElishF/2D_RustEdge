@@ -342,6 +342,9 @@ MonoBehaviour:
   - partType: 6
     partName: 0
     overrideController: {fileID: 22100000, guid: 385a7734c02e3b74092f1d26a278771f, type: 2}
+  - partType: 3
+    partName: 3
+    overrideController: {fileID: 22100000, guid: 8a66efc50a3bb4a47872f9465903fb9d, type: 2}
 --- !u!1 &53498563
 GameObject:
   m_ObjectHideFlags: 0
@@ -1280,6 +1283,7 @@ MonoBehaviour:
   waterTile: {fileID: 11400000, guid: e82095adc315a944f93bb6f87a52878d, type: 2}
   mapDataList:
   - {fileID: 11400000, guid: 37312efe8e9ce704ca121df5d12a08d7, type: 2}
+  - {fileID: 11400000, guid: 3e236dc9ca29edd4caaee9923064a876, type: 2}
 --- !u!1 &1385260045
 GameObject:
   m_ObjectHideFlags: 0

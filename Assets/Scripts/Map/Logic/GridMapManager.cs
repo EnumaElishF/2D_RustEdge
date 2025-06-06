@@ -28,6 +28,9 @@ namespace Farm.Map
         //场景名称+坐标和对应的瓦片信息 （key是场景坐标+名字，例如：x坐标y坐标01Field )(value是TileDetails)
         private Dictionary<string, TileDetails> tileDetailsDict = new Dictionary<string, TileDetails>();
 
+        //记录场景是否第一次加载
+        private Dictionary<string, bool> firstLoadDict = new Dictionary<string, bool>();
+
 
         private Grid currentGrid;
         private void OnEnable()
@@ -49,13 +52,31 @@ namespace Farm.Map
 
         }
 
+
+        private void Start()
+        {
+            foreach (var mapData in mapDataList)
+            {
+                firstLoadDict.Add(mapData.sceneName, true);
+                InitTileDetailsDict(mapData);
+            }
+        }
+
         private void OnAfterSceneLoadedEvent()
         {
             currentGrid = FindAnyObjectByType<Grid>();
             digTilemap = GameObject.FindWithTag("Dig").GetComponent<Tilemap>();
             waterTilemap = GameObject.FindWithTag("Water").GetComponent<Tilemap>();
 
-            //DisplayMap(SceneManager.GetActiveScene().name);
+            if (firstLoadDict[SceneManager.GetActiveScene().name]) //true，是第一次加载，
+            {
+                //预先生成农作物
+                EventHandler.CallGenerateCropEvent();
+                firstLoadDict[SceneManager.GetActiveScene().name] = false; //本场景名做索引，不再是第一次加载
+            }
+
+
+
             RefreshMap();
         }
         private void OnGameDayEvent(int day, Season season)
@@ -72,7 +93,7 @@ namespace Farm.Map
                     tile.Value.daySinceDug++;
                 }
                 //超期清除挖坑
-                if(tile.Value.daySinceDug>5 && tile.Value.seedItemID == -1)
+                if (tile.Value.daySinceDug > 5 && tile.Value.seedItemID == -1)
                 {
                     tile.Value.daySinceDug = -1;
                     tile.Value.canDig = true;
@@ -84,14 +105,6 @@ namespace Farm.Map
                 }
             }
             RefreshMap();
-        }
-
-        private void Start()
-        {
-            foreach (var mapData in mapDataList)
-            {
-                InitTileDetailsDict(mapData);
-            }
         }
 
         /// <summary>
@@ -202,6 +215,7 @@ namespace Farm.Map
                         currentTile.daySinceWatered = 0;
                         //音效
                         break;
+                    case ItemType.BreakTool:
                     case ItemType.ChopTool:
                         // 执行收割逻辑   :?.做防currentCrop点击为空处理
                         currentCrop?.ProcessToolAction(itemDetails, currentCrop.tileDetails);
@@ -266,6 +280,10 @@ namespace Farm.Map
             {
                 tileDetailsDict[key] = tileDetails;
             }
+            else
+            {
+                tileDetailsDict.Add(key, tileDetails);
+            }
         }
         /// <summary>
         /// 刷新当前地图
@@ -314,6 +332,7 @@ namespace Farm.Map
                 }
             }
         }
+
     }
 }
 

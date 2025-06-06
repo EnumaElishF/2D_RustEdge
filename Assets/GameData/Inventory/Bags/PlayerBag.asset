@@ -30,15 +30,15 @@ MonoBehaviour:
   - itemID: 1011
     itemAmount: 11
   - itemID: 1016
-    itemAmount: 14
+    itemAmount: 13
   - itemID: 1019
-    itemAmount: 10
+    itemAmount: 11
   - itemID: 1015
     itemAmount: 2
-  - itemID: 0
-    itemAmount: 0
-  - itemID: 0
-    itemAmount: 0
+  - itemID: 1018
+    itemAmount: 3
+  - itemID: 1003
+    itemAmount: 1
   - itemID: 0
     itemAmount: 0
   - itemID: 0

@@ -10,15 +10,26 @@ public class Settings
     public const float itemFadeDuration = 0.35f;
     public const float targetAlpha = 0.45f;
 
-    //时间相关
+    /// <summary>
+    /// 时间相关
+    /// </summary>
     public const float secondThreshold = 0.01f;    //数值越小，时间越快
     public const int secondHold = 59;
     public const int minuteHold = 59;
     public const int hourHold = 23;
-    //dayHold控制一个月有多少天，我们这里暂时设置30天一个月
+    /// <summary>
+    /// dayHold控制一个月有多少天，我们这里暂时设置30天一个月
+    /// </summary>
     public const int dayHold = 30;
     public const int seasonHold = 3;
 
-    //Transition,过渡场景
+    /// <summary>
+    /// Transition,过渡场景
+    /// </summary>
     public const float fadeDuration = 1.5f;
+
+    /// <summary>
+    /// 割草数量限制
+    /// </summary>
+    public const int reapAmount = 2;
 }

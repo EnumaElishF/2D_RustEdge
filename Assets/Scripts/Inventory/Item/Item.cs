@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Farm.CropPlant;
 
 namespace Farm.Inventory {
 
@@ -35,6 +36,14 @@ namespace Farm.Inventory {
                 Vector2 newSize = new Vector2(spriteRenderer.sprite.bounds.size.x, spriteRenderer.sprite.bounds.size.y);
                 coll.size = newSize;
                 coll.offset = new Vector2(0, spriteRenderer.sprite.bounds.center.y);
+            }
+
+            if(itemDetails.itemType == ItemType.ReapableScenery)
+            {
+                //如果是可收割的，ReapableScenery物品挂上ReapItem脚本
+                gameObject.AddComponent<ReapItem>();
+                gameObject.GetComponent<ReapItem>().InitCropData(itemDetails.itemID);
+                gameObject.AddComponent<ItemInteractive>();
             }
         }
     }

@@ -235,7 +235,9 @@ public class CursorManager : MonoBehaviour
                     }else
                         SetCursorInValid(); //没有种子
                     break;
-
+                case ItemType.ReapTool:
+                    if (GridMapManager.Instance.HaveReapableItemsInRadiusNew(mouseWorldPos,currentItem)) SetCursorValid(); else SetCursorInValid();
+                    break;
             }
         }
         else

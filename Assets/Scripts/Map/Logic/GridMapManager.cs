@@ -1,3 +1,4 @@
+using Farm.CropPlant;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -31,6 +32,8 @@ namespace Farm.Map
         //记录场景是否第一次加载
         private Dictionary<string, bool> firstLoadDict = new Dictionary<string, bool>();
 
+        //杂草列表
+        private List<ReapItem> itemsInRadius;
 
         private Grid currentGrid;
         private void OnEnable()
@@ -224,6 +227,18 @@ namespace Farm.Map
                         // 执行收割逻辑
                         currentCrop.ProcessToolAction(itemDetails,currentTile);
                         break;
+                    case ItemType.ReapTool:
+                        var reapCount = 0;
+                        for(int i = 0; i < itemsInRadius.Count; i++)
+                        {
+                            EventHandler.CalllParticleEffectEvent(ParticalEffectType.ReapableScenery, itemsInRadius[i].transform.position+Vector3.up);
+                            itemsInRadius[i].SpawnHarvestItems();
+                            Destroy(itemsInRadius[i].gameObject);
+                            reapCount++;
+                            if (reapCount >= Settings.reapAmount)
+                                break;
+                        }
+                        break;
                 }
                 UpdateTileDetails(currentTile);
             }
@@ -243,6 +258,60 @@ namespace Farm.Map
                     currentCrop = colliders[i].GetComponent<Crop>();
             }
             return currentCrop;
+        }
+        /// <summary>
+        /// 返回工具范围的杂草
+        /// </summary>
+        /// <param name="tool">物品信息</param>
+        /// <returns></returns>
+        public bool HaveReapableItemsInRadius(Vector3 mouseWorldPos,ItemDetails tool)
+        {
+            itemsInRadius = new List<ReapItem>();
+            //!!! OverlapCircleNonAlloc已经弃用，需要新修改
+            Collider2D[] colliders = new Collider2D[20];
+            Physics2D.OverlapCircleNonAlloc(mouseWorldPos, tool.itemUseRadius, colliders);
+
+            if (colliders.Length > 0)
+            {
+                for (int i = 0; i < colliders.Length; i++)
+                {
+                    if (colliders[i] != null)
+                    {
+                        if (colliders[i].GetComponent<ReapItem>())
+                        {
+                            var item = colliders[i].GetComponent<ReapItem>();
+                            itemsInRadius.Add(item);
+                        }
+                    }
+                }
+            }
+            return itemsInRadius.Count > 0;
+        }
+        /// <summary>
+        /// 返回工具范围的杂草,23.1版本
+        /// </summary>
+        /// <param name="tool">物品信息</param>
+        /// <returns></returns>
+        public bool HaveReapableItemsInRadiusNew(Vector3 mouseWorldPos, ItemDetails tool)
+        {
+            itemsInRadius = new List<ReapItem>();
+
+            // 使用 OverlapCircleAll 替代 OverlapCircle，获取所有碰撞体
+            //OverlapCircleAll适合割草，获取检测范围全部的碰撞体
+            //OverlapCircle只会返回第一个碰撞体
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(mouseWorldPos, tool.itemUseRadius);
+
+            if (colliders.Length > 0)
+            {
+                foreach (Collider2D collider in colliders)
+                {
+                    if (collider != null && collider.GetComponent<ReapItem>() != null)
+                    {
+                        itemsInRadius.Add(collider.GetComponent<ReapItem>());
+                    }
+                }
+            }
+            return itemsInRadius.Count > 0;
         }
         /// <summary>
         /// 显示挖坑瓦片

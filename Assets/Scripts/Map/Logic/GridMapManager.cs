@@ -172,7 +172,7 @@ namespace Farm.Map
         }
 
         /// <summary>
-        /// 根据鼠标网格坐标，返回瓦片信息
+        /// 根据鼠标网格坐标，返回瓦片信息 :(只能返回当前激活场景的瓦片信息）
         /// </summary>
         /// <param name="mouseGridPos">鼠标网格坐标</param>
         /// <returns></returns>
@@ -402,6 +402,33 @@ namespace Farm.Map
             }
         }
 
+        /// <summary>
+        /// 根据场景名称构建网格范围，输出范围和原点
+        /// </summary>
+        /// <param name="sceneName">场景名称</param>
+        /// <param name="gridDimensions">网格范围</param>
+        /// <param name="gridOrigin">网格原点</param>
+        /// <returns></returns>
+        public bool GetGridDimensions(string sceneName, out Vector2Int gridDimensions,out Vector2Int gridOrigin)
+        {
+            gridDimensions = Vector2Int.zero;
+            gridOrigin = Vector2Int.zero;
+
+            foreach(var mapData in mapDataList)
+            {
+                if(mapData.sceneName == sceneName)
+                {
+                    gridDimensions.x = mapData.gridWidth;
+                    gridDimensions.y = mapData.gridHeight;
+
+                    gridOrigin.x = mapData.originX;
+                    gridOrigin.y = mapData.originY;
+
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
 

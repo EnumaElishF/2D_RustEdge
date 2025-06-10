@@ -85,7 +85,10 @@ namespace Farm.AStar
             return true;
 
         }
-
+        /// <summary>
+        /// 找到最短路径 所有Node添加到 closedNodeList
+        /// </summary>
+        /// <returns></returns>
         private bool FindShortestPath()
         {
             //添加起点
@@ -93,7 +96,7 @@ namespace Farm.AStar
 
             while (openNodeList.Count > 0)
             {
-                //节点排序
+                //节点排序，Node内涵比较函数
                 openNodeList.Sort();
 
                 Node closeNode = openNodeList[0]; //最近的节点
@@ -107,11 +110,80 @@ namespace Farm.AStar
                 }
 
                 //计算周围8个Node补充到OpenNodeList
-
+                EvaluateNeighbourNodes(closeNode);
             }
             return pathFound;
 
 
+        }
+
+        /// <summary>
+        /// 评估周围8个点，并生成对应消耗值
+        /// </summary>
+        /// <param name="currentNode"></param>
+        private void EvaluateNeighbourNodes(Node currentNode)
+        {
+            Vector2Int currentNodePos = currentNode.gridPosition;
+            Node validNeighbourNode;
+            //循环了8次，除了中心点以外都循环了
+            for(int x= -1; x <= 1; x++)
+            {
+                for(int y = -1; y <= 1; y++)
+                {
+                    if (x == 0 && y == 0)
+                    {
+                        continue;
+                    }
+                    validNeighbourNode = GetValidNeighbourNode(currentNodePos.x + x, currentNodePos.y + y);
+                    if (validNeighbourNode != null)
+                    {
+                        if (!openNodeList.Contains(validNeighbourNode))
+                        {
+                            validNeighbourNode.gCost = currentNode.gCost + GetDistance(currentNode, validNeighbourNode);
+                            validNeighbourNode.hCost = GetDistance(validNeighbourNode, targetNode);
+                            //连接父节点
+                            validNeighbourNode.parentNode = currentNode;
+                            openNodeList.Add(validNeighbourNode);
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 找到有效的Node，非障碍，非已选择的点
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private Node GetValidNeighbourNode(int x,int y)
+        {
+            if(x>=gridWidth || y>=gridHeight || x < 0 || y < 0)
+            {
+                return null;
+            }
+            Node neighbourNode = gridNodes.GetGridNode(x, y);
+            if (neighbourNode.isObstacle || closeNodeList.Contains(neighbourNode)) //不能是障碍，也不能是被选择的点
+                return null;
+            else
+                return neighbourNode;
+        }
+        /// <summary>
+        /// 返回两点之间距离值（寻路可走只能单格子走或者斜方向一个格子
+        /// </summary>
+        /// <param name="nodeA"></param>
+        /// <param name="nodeB"></param>
+        /// <returns>14的倍数+10的倍数</returns>
+        private int GetDistance(Node nodeA,Node nodeB)
+        {
+            int xDistance = Mathf.Abs(nodeA.gridPosition.x - nodeB.gridPosition.x);
+            int yDistance = Mathf.Abs(nodeA.gridPosition.y - nodeB.gridPosition.y);
+            if (xDistance > yDistance)
+            {
+                //横格距离是10，斜着是14≈14.14
+                return 14 * yDistance + 10 * (xDistance - yDistance);
+
+            }
+            return 14 * xDistance + 10 * (yDistance - xDistance);
         }
 
     }

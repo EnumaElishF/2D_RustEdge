@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Farm.AStar
 {
     public class GridNodes
@@ -9,8 +10,9 @@ namespace Farm.AStar
         private int width;
         private int height;
         private Node[,] gridNode;
+
         /// <summary>
-        /// 构建函数初始化节点范围数组
+        /// 构造函数初始化节点范围数组
         /// </summary>
         /// <param name="width">地图宽度</param>
         /// <param name="height">地图高度</param>
@@ -19,16 +21,20 @@ namespace Farm.AStar
             this.width = width;
             this.height = height;
             //手动生成gridNode
-            for(int x = 0; x < width; x++)
+
+            gridNode = new Node[width, height];
+
+            for (int x = 0; x < width; x++)
             {
-                for(int y=0; y < height; y++)
+                for (int y = 0; y < height; y++)
                 {
                     gridNode[x, y] = new Node(new Vector2Int(x, y));
                 }
             }
         }
 
-        public Node GetGridNode(int xPos,int yPos)
+
+        public Node GetGridNode(int xPos, int yPos)
         {
             if (xPos < width && yPos < height)
             {
@@ -38,5 +44,4 @@ namespace Farm.AStar
             return null;
         }
     }
-
 }

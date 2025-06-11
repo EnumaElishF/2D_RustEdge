@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Farm.AStar
 {
-    public class AStar : MonoBehaviour
+    public class AStar : Singleton<AStar>
     {
         private GridNodes gridNodes;
         private Node startNode;
@@ -29,7 +29,7 @@ namespace Farm.AStar
         /// <param name="startPos"></param>
         /// <param name="endPos"></param>
         /// <param name="npcMovementStack"></param>
-        public void BuilPath(string sceneName,Vector2Int startPos,Vector2Int endPos,Stack<MovementStep> npcMovementStack)
+        public void BuildPath(string sceneName,Vector2Int startPos,Vector2Int endPos,Stack<MovementStep> npcMovementStack)
         {
             pathFound = false;
             if (GenerateGridNodes(sceneName, startPos, endPos))
@@ -78,12 +78,15 @@ namespace Farm.AStar
                 for(int y = 0; y < gridHeight; y++)
                 {
                     //按之前加场景的固定规则，建立key
-                    var key = (x + originX) + "x" + (y + originY) + "y" + sceneName;
                     Vector3Int tilePos = new Vector3Int(x + originX, y + originY, 0);
-                    TileDetails tile = GridMapManager.Instance.GetTileDetailsOnMousePosition(tilePos);
-                    if(tile!= null)
+                    var key = tilePos.x + "x" + tilePos.y + "y" + sceneName;
+
+                    TileDetails tile = GridMapManager.Instance.GetTileDetails(key);
+
+                    if (tile != null)
                     {
                         Node node = gridNodes.GetGridNode(x, y);
+
                         if (tile.isNPCObstacle)
                             node.isObstacle = true;
                     }

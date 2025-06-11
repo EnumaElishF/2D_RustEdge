@@ -45,7 +45,7 @@ namespace Farm.AStar
                 if (displayPath)
                 {
                     var sceneName = SceneManager.GetActiveScene().name;
-                    aStar.BuilPath(sceneName, startPos, finishPos, npcMovementStepStack);
+                    aStar.BuildPath(sceneName, startPos, finishPos, npcMovementStepStack);
                     foreach(var step in npcMovementStepStack)
                     {
                         displayMap.SetTile((Vector3Int)step.gridCoordinate, displayTile); //生成最短路径

@@ -22,7 +22,14 @@ namespace Farm.AStar
 
         private bool pathFound;
 
-        public void BuilPath(string sceneName,Vector2Int startPos,Vector2Int endPos)
+        /// <summary>
+        /// 构建路径更新Stack的每一步
+        /// </summary>
+        /// <param name="sceneName"></param>
+        /// <param name="startPos"></param>
+        /// <param name="endPos"></param>
+        /// <param name="npcMovementStack"></param>
+        public void BuilPath(string sceneName,Vector2Int startPos,Vector2Int endPos,Stack<MovementStep> npcMovementStack)
         {
             pathFound = false;
             if (GenerateGridNodes(sceneName, startPos, endPos))
@@ -31,7 +38,7 @@ namespace Farm.AStar
                 if (FindShortestPath())
                 {
                     //构建NPC最短路径
-
+                    UpdatePathOnMovementStepStack(sceneName, npcMovementStack);
                 }
 
 
@@ -185,7 +192,27 @@ namespace Farm.AStar
             }
             return 14 * xDistance + 10 * (yDistance - xDistance);
         }
+        /// <summary>
+        /// 更新每一步的坐标和场景名称  (堆栈, 从终点反向推回来，然后压入栈中)
+        /// </summary>
+        /// <param name="sceneName"></param>
+        /// <param name="npcMovementStep"></param>
+        //
+        private void UpdatePathOnMovementStepStack(string sceneName,Stack<MovementStep> npcMovementStep)
+        {
+            Node nextNode = targetNode;
 
+            while (nextNode != null)
+            {
+                MovementStep newStep = new MovementStep();
+                newStep.sceneName = sceneName;
+                newStep.gridCoordinate = new Vector2Int(nextNode.gridPosition.x + originX, nextNode.gridPosition.y + originY);
+                //压入堆栈中
+                npcMovementStep.Push(newStep);
+                nextNode = nextNode.parentNode;
+
+            }
+        }
     }
 
 }

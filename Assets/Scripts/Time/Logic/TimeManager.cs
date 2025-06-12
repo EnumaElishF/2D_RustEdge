@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeManager : MonoBehaviour
+public class TimeManager : Singleton<TimeManager>
 {
     private int gameSecond, gameMinute, gameHour, gameDay, gameMonth, gameYear;
 
@@ -11,8 +12,11 @@ public class TimeManager : MonoBehaviour
     public bool gameClockPause;//Ê±¼äÔÝÍ£
     private float tikTime;
 
-    private void Awake()
+    public TimeSpan GameTime => new TimeSpan(gameHour, gameMinute, gameSecond);
+
+    protected override void Awake()
     {
+        base.Awake();
         NewGameTime();
     }
     private void Start()

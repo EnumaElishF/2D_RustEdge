@@ -32,4 +32,8 @@ public class Settings
     /// 割草数量限制
     /// </summary>
     public const int reapAmount = 2;
+
+    //NPC网格移动
+    public const float gridCellSize = 1;
+    public const float gridCellDiagonalSize = 1.41f;  //Diagonal斜方向
 }

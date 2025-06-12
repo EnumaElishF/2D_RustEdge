@@ -1162,6 +1162,11 @@ MonoBehaviour:
   displayTile: {fileID: 11400000, guid: 0a449866255821f4c82daa7c6da4064f, type: 2}
   displayStartAndFinish: 0
   displayPath: 0
+  npcMovement: {fileID: 1508132549}
+  moveNPC: 0
+  targetScene: 01_Field
+  targetPos: {x: 5, y: -5}
+  stopClip: {fileID: 7400000, guid: 54d560542c0284c169c56cddc7145ac6, type: 2}
 --- !u!114 &777268357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1917,7 +1922,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8096e4ae7e10a7459248ccdfd47b030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentScene: 02Home
+  scheduleData: {fileID: 11400000, guid: 28e728e39c34baa4885d04fc3751a564, type: 2}
+  currentScene: 01_Field
   normalSpeed: 2
   isMoving: 0
 --- !u!1 &1698155805

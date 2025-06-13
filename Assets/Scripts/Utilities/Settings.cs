@@ -37,6 +37,8 @@ public class Settings
     public const float gridCellSize = 1;
     public const float gridCellDiagonalSize = 1.41f;  //Diagonal斜方向
     //像素距离 :本项目单个格子是20*20像素，20*20占一个unit，1/20 = 0.05单位像素距离
-    public const float pixelSize = 0.05f; 
+    public const float pixelSize = 0.05f;
+    public const float animationBreakTime = 5f; //动画间隔时间
+
 
 }

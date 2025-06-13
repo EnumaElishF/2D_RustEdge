@@ -25,7 +25,7 @@ public class TimeManager : Singleton<TimeManager>
         //Awake——>OnEnable–>Start——>(FixedUpdate——>Update——>LateUpdate)——>OnGUI——>OnDisable——>OnDestroy
         //Event C# 中实现发布 - 订阅模式的语言特性 ,类似订阅+监听的模式
         EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
-        EventHandler.CallGameMinuteEvent(gameMinute, gameHour);
+        EventHandler.CallGameMinuteEvent(gameMinute, gameHour,gameDay,gameSeason);
     }
     private void Update()
     {
@@ -68,7 +68,7 @@ public class TimeManager : Singleton<TimeManager>
     private void UpdateGameTime()
     {
         gameSecond++;
-        if (gameSecond > Settings.seasonHold)
+        if (gameSecond > Settings.secondHold)
         {
             gameMinute++;
             gameSecond = 0;
@@ -113,7 +113,7 @@ public class TimeManager : Singleton<TimeManager>
                 EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
             }
             //秒的变化
-            EventHandler.CallGameMinuteEvent(gameMinute, gameHour);
+            EventHandler.CallGameMinuteEvent(gameMinute, gameHour, gameDay, gameSeason);
         }
         //Debug.Log("Second:" + gameSecond + "Minute:" + gameMinute);
     }

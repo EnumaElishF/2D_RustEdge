@@ -45,6 +45,14 @@ public class NPCMovement : MonoBehaviour
     private bool npcMove;
     private bool sceneLoaded;
 
+    //动画计时器
+    private float animationBreakTime;
+    private bool canPlayStopAnimation;
+    private AnimationClip stopAnimationClip;
+    public AnimationClip blankAnimationClip;
+    private AnimatorOverrideController animOverride;
+
+
     private TimeSpan GameTime => TimeManager.Instance.GameTime;
 
     private void Awake()
@@ -54,27 +62,71 @@ public class NPCMovement : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
         movementSteps = new Stack<MovementStep>();
+
+        animOverride = new AnimatorOverrideController(anim.runtimeAnimatorController);
+        anim.runtimeAnimatorController = animOverride;
+        scheduleSet = new SortedSet<ScheduleDetails>();
+
+        foreach (var schedule in scheduleData.scheduleList)
+        {
+            scheduleSet.Add(schedule);
+        }
     }
 
     private void OnEnable()
     {
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
         EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
+        EventHandler.GameMinuteEvent += OnGameMinuteEvent;
     }
     private void OnDisable()
     {
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
         EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
+        EventHandler.GameMinuteEvent -= OnGameMinuteEvent;
 
 
     }
 
 
 
+    private void Update()
+    {
+        if (sceneLoaded)
+            SwitchAnimation();
+
+        //计时器
+        animationBreakTime -= Time.deltaTime;
+        canPlayStopAnimation = animationBreakTime <= 0;
+
+    }
+
     private void FixedUpdate()
     {
         if (sceneLoaded)
             Movement();
+    }
+    private void OnGameMinuteEvent(int minute, int hour, int day, Season season)
+    {
+        int time = (hour * 100) + minute;
+        ScheduleDetails matchSchedule = null;
+        foreach(var schedule in scheduleSet)
+        {
+            if(schedule.Time == time)
+            {
+                if (schedule.day != day && schedule.day!=0)
+                    continue;
+                if (schedule.season != season)
+                    continue;
+                matchSchedule = schedule;
+
+            }else if (schedule.Time > time)
+            {
+                break;
+            }
+        }
+        if (matchSchedule != null)
+            BuildPath(matchSchedule);
     }
     private void OnBeforeSceneUnloadEvent()
     {
@@ -112,7 +164,9 @@ public class NPCMovement : MonoBehaviour
         targetGridPosition = currentGridPosition;
 
     }
-
+    /// <summary>
+    /// 主要移动方法
+    /// </summary>
     private void Movement()
     {
         if (!npcMove)
@@ -129,6 +183,10 @@ public class NPCMovement : MonoBehaviour
 
                 MoveToGridPosition(nextGridPosition, stepTime);
 
+            }
+            else if (!isMoving && canPlayStopAnimation)
+            {
+                StartCoroutine(SetStopAnimation());
             }
         }
 
@@ -153,7 +211,7 @@ public class NPCMovement : MonoBehaviour
             if(speed<= maxSpeed)
             {
                 //按照每次0.05的像素距离，进行移动判断
-                while (Vector3.Distance(transform.position, nextWorldPosition) < Settings.pixelSize)
+                while (Vector3.Distance(transform.position, nextWorldPosition) > Settings.pixelSize)
                 {
                     dir = (nextWorldPosition - transform.position).normalized;
                     Vector2 posOffset = new Vector2(dir.x * speed * Time.fixedDeltaTime, dir.y * speed * Time.fixedDeltaTime);
@@ -162,7 +220,7 @@ public class NPCMovement : MonoBehaviour
                 }
             }
         }
-        //如果时间到了就瞬移
+        //如果时间已经到了就瞬移
         rb.position = nextWorldPosition;
         currentGridPosition = gridPos;
         nextGridPosition = currentGridPosition;
@@ -179,6 +237,8 @@ public class NPCMovement : MonoBehaviour
     {
         movementSteps.Clear();
         currentSchedule = schedule;
+        targetGridPosition = (Vector3Int)schedule.targetGridPosition;
+        stopAnimationClip = schedule.clipAtStop;
         if(schedule.targetScene == currentScene)
         {
             AStar.Instance.BuildPath(schedule.targetScene, (Vector2Int)currentGridPosition, schedule.targetGridPosition, movementSteps);
@@ -210,8 +270,11 @@ public class NPCMovement : MonoBehaviour
                 //去下一个格子要走的时间: 斜方向  Diagonal
                 gridMovementStepTime = new TimeSpan(0, 0, (int)(Settings.gridCellDiagonalSize / normalSpeed / Settings.secondThreshold));
             }
-            //去下一个格子要走的时间 ： 横竖方向
-            gridMovementStepTime = new TimeSpan(0, 0, (int)(Settings.gridCellSize / normalSpeed / Settings.secondThreshold));
+            else
+            {
+                //去下一个格子要走的时间 ： 横竖方向
+                gridMovementStepTime = new TimeSpan(0, 0, (int)(Settings.gridCellSize / normalSpeed / Settings.secondThreshold));
+            }
             //累加获得下一步的时间戳
             currentGameTime = currentGameTime.Add(gridMovementStepTime);
             //循环下一步
@@ -241,6 +304,48 @@ public class NPCMovement : MonoBehaviour
         Vector3 worldPos = grid.CellToWorld(gridPos);
         return new Vector3(worldPos.x + Settings.gridCellSize / 2f, worldPos.y + Settings.gridCellSize / 2);
     }
+
+    private void SwitchAnimation()
+    {
+        //通过 目标点返回对应的世界坐标，如果目标点的世界坐标和当前人物的坐标一样，那么就停下来。如果不等于那就进行移动。
+        isMoving = transform.position != GetWorldPosition(targetGridPosition);
+        anim.SetBool("isMoving",isMoving);
+        if (isMoving)
+        {
+            anim.SetBool("Exit", true);
+            anim.SetFloat("DirX", dir.x);
+            anim.SetFloat("DirY", dir.y);
+
+        }
+        else
+        {
+            anim.SetBool("Exit", false);
+        }
+    }
+
+    private IEnumerator SetStopAnimation()
+    {
+        //强制面向镜头
+        anim.SetFloat("DirX", 0);
+        anim.SetFloat("DirY", -1);
+
+        animationBreakTime = Settings.animationBreakTime;
+        if (stopAnimationClip != null)
+        {
+            Debug.Log("EventAnimation启动", stopAnimationClip);
+            animOverride[blankAnimationClip] = stopAnimationClip;
+
+            anim.SetBool("EventAnimation", true);
+            yield return null;
+            anim.SetBool("EventAnimation", false);
+        }
+        else
+        {
+            animOverride[stopAnimationClip] = blankAnimationClip;
+            anim.SetBool("EventAnimation", false);
+        }
+    }
+
     #region 设置NPC显示情况
     private void SetActiveInScene()
     {

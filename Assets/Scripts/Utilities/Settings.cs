@@ -39,6 +39,6 @@ public class Settings
     //像素距离 :本项目单个格子是20*20像素，20*20占一个unit，1/20 = 0.05单位像素距离
     public const float pixelSize = 0.05f;
     public const float animationBreakTime = 5f; //动画间隔时间
-
+    public const int maxGridSize = 9999; //最大网格尺寸：超出9999就做判断
 
 }

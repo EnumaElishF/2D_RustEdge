@@ -249,9 +249,43 @@ public class NPCMovement : MonoBehaviour
         stopAnimationClip = schedule.clipAtStop;
         if(schedule.targetScene == currentScene)
         {
+            //同场景的数据，构建当前场景路径
             AStar.Instance.BuildPath(schedule.targetScene, (Vector2Int)currentGridPosition, schedule.targetGridPosition, movementSteps);
         }
-        //TODO 跨场景移动
+        else if(schedule.targetScene != currentScene)
+        {
+            //读取跨场景的数据
+            SceneRoute sceneRoute = NPCManager.Instance.GetSceneRoute(currentScene, schedule.targetScene);
+            if (sceneRoute != null)
+            {
+                for(int i = 0; i < sceneRoute.scenePathList.Count; i++)
+                {
+                    Vector2Int fromPos, gotoPos;
+                    ScenePath path = sceneRoute.scenePathList[i];
+
+                    if (path.fromGridCell.x >= Settings.maxGridSize)
+                    {
+                        fromPos = (Vector2Int)currentGridPosition;
+
+                    }
+                    else
+                    {
+                        fromPos = path.fromGridCell;
+                    }
+                    if (path.gotoGridCell.x >= Settings.maxGridSize)
+                    {
+                        gotoPos = (Vector2Int)targetGridPosition;
+
+                    }
+                    else
+                    {
+                        gotoPos = path.gotoGridCell;
+                    }
+
+                    AStar.Instance.BuildPath(path.sceneName, fromPos, gotoPos, movementSteps);
+                }
+            }
+        }
         if(movementSteps.Count > 1)
         {
             //更新每一步对应的时间戳

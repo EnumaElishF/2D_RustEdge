@@ -1929,6 +1929,72 @@ MonoBehaviour:
   - tileCoordinate: {x: 26, y: -7}
     gridType: 1
     boolTypeValue: 1
+  - tileCoordinate: {x: -18, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -17, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -16, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -15, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -14, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -13, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -12, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -11, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -10, y: 2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -10, y: 3}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -9, y: 3}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -8, y: 3}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -8, y: 4}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -7, y: 4}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -7, y: 5}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -6, y: 5}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: 5}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: 6}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: 7}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: 8}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: 9}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: 10}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: 11, y: -6}
     gridType: 3
     boolTypeValue: 1
@@ -1989,18 +2055,6 @@ MonoBehaviour:
   - tileCoordinate: {x: 12, y: 3}
     gridType: 3
     boolTypeValue: 1
-  - tileCoordinate: {x: 13, y: -6}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 13, y: -5}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 13, y: -4}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 13, y: -3}
-    gridType: 3
-    boolTypeValue: 1
   - tileCoordinate: {x: 13, y: -2}
     gridType: 3
     boolTypeValue: 1
@@ -2017,18 +2071,6 @@ MonoBehaviour:
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 13, y: 3}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 14, y: -6}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 14, y: -5}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 14, y: -4}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 14, y: -3}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 14, y: -2}
@@ -2049,18 +2091,6 @@ MonoBehaviour:
   - tileCoordinate: {x: 14, y: 3}
     gridType: 3
     boolTypeValue: 1
-  - tileCoordinate: {x: 15, y: -6}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 15, y: -5}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 15, y: -4}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 15, y: -3}
-    gridType: 3
-    boolTypeValue: 1
   - tileCoordinate: {x: 15, y: -2}
     gridType: 3
     boolTypeValue: 1
@@ -2077,18 +2107,6 @@ MonoBehaviour:
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 15, y: 3}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 16, y: -6}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 16, y: -5}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 16, y: -4}
-    gridType: 3
-    boolTypeValue: 1
-  - tileCoordinate: {x: 16, y: -3}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 16, y: -2}
@@ -2229,6 +2247,21 @@ MonoBehaviour:
   - tileCoordinate: {x: 20, y: 3}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: 20, y: 6}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 20, y: 7}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 20, y: 8}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 20, y: 9}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 20, y: 10}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: 21, y: -6}
     gridType: 3
     boolTypeValue: 1
@@ -2257,6 +2290,9 @@ MonoBehaviour:
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 21, y: 3}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 21, y: 6}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 22, y: -6}
@@ -2289,6 +2325,9 @@ MonoBehaviour:
   - tileCoordinate: {x: 22, y: 3}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: 22, y: 6}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: 23, y: -6}
     gridType: 3
     boolTypeValue: 1
@@ -2317,6 +2356,9 @@ MonoBehaviour:
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 23, y: 3}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 23, y: 6}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 24, y: -6}
@@ -2349,6 +2391,9 @@ MonoBehaviour:
   - tileCoordinate: {x: 24, y: 3}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: 24, y: 6}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: 25, y: -6}
     gridType: 3
     boolTypeValue: 1
@@ -2379,6 +2424,9 @@ MonoBehaviour:
   - tileCoordinate: {x: 25, y: 3}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: 25, y: 6}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: 26, y: -6}
     gridType: 3
     boolTypeValue: 1
@@ -2407,5 +2455,8 @@ MonoBehaviour:
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 26, y: 3}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 26, y: 6}
     gridType: 3
     boolTypeValue: 1

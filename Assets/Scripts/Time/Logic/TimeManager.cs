@@ -19,6 +19,29 @@ public class TimeManager : Singleton<TimeManager>
         base.Awake();
         NewGameTime();
     }
+    private void OnEnable()
+    {
+        EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
+        EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
+    }
+    private void OnDisable()
+    {
+        EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
+        EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
+
+    }
+
+    private void OnAfterSceneLoadedEvent()
+    {
+        gameClockPause = false; //场景加载之后，重新开启时间
+
+    }
+
+    private void OnBeforeSceneUnloadEvent()
+    {
+        gameClockPause = true; //场景在卸载之前，先暂停时间
+    }
+
     private void Start()
     {
         //为了能更新日期，需要在Awake和OnEnable执行

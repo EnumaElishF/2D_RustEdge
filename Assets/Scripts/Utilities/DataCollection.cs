@@ -111,3 +111,19 @@ public class NPCPosition
     public Vector3 position;
 
 }
+//场景路径
+[System.Serializable]
+public class SceneRoute
+{
+    public string fromSceneName;
+    public string gotoSceneName;
+    public List<ScenePath> scenePathList;
+}
+[System.Serializable]
+public class ScenePath
+{
+    public string sceneName;
+    public Vector2Int fromGridCell; //来的坐标
+    public Vector2Int gotoGridCell; //去的坐标
+
+}

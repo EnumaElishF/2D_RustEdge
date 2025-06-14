@@ -48,9 +48,9 @@ public class NPCMovement : MonoBehaviour
     //动画计时器
     private float animationBreakTime;
     private bool canPlayStopAnimation;
-    private AnimationClip stopAnimationClip;
+    public AnimationClip stopAnimationClip;
     public AnimationClip blankAnimationClip;
-    private AnimatorOverrideController animOverride;
+    public AnimatorOverrideController animOverride;
 
 
     private TimeSpan GameTime => TimeManager.Instance.GameTime;
@@ -65,6 +65,14 @@ public class NPCMovement : MonoBehaviour
 
         animOverride = new AnimatorOverrideController(anim.runtimeAnimatorController);
         anim.runtimeAnimatorController = animOverride;
+        // 检查必要的动画剪辑是否已设置
+        if (blankAnimationClip == null)
+        {
+            Debug.LogError("blankAnimationClip未设置，NPC动画系统可能无法正常工作");
+        }
+
+
+
         scheduleSet = new SortedSet<ScheduleDetails>();
 
         foreach (var schedule in scheduleData.scheduleList)
@@ -330,9 +338,21 @@ public class NPCMovement : MonoBehaviour
         anim.SetFloat("DirY", -1);
 
         animationBreakTime = Settings.animationBreakTime;
+
+        // 确保有有效的空白动画
+        if (blankAnimationClip == null)
+        {
+            Debug.LogError("blankAnimationClip未设置，无法播放停止动画");
+            yield break;
+        }
+
         if (stopAnimationClip != null)
         {
             Debug.Log("EventAnimation启动", stopAnimationClip);
+            if (anim == null)
+            {
+                Debug.Log("anim异常");
+            }
             animOverride[blankAnimationClip] = stopAnimationClip;
 
             anim.SetBool("EventAnimation", true);

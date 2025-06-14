@@ -1926,7 +1926,9 @@ MonoBehaviour:
   currentScene: 01_Field
   normalSpeed: 2
   isMoving: 0
+  stopAnimationClip: {fileID: 0}
   blankAnimationClip: {fileID: 7400000, guid: 500fefed8113b4f7e8f2dc728631a63d, type: 2}
+  animOverride: {fileID: 0}
 --- !u!1 &1698155805
 GameObject:
   m_ObjectHideFlags: 0

@@ -40,7 +40,7 @@ namespace Farm.AStar
             {
                 return gridNode[xPos, yPos];
             }
-            Debug.Log("³¬³öÍø¸ñ·¶Î§");
+            Debug.Log("³¬³öÍø¸ñ·¶Î§,xPos:"+ xPos+ ",yPos:"+ yPos+ ",width:"+ width+ ",height:"+ height);
             return null;
         }
     }

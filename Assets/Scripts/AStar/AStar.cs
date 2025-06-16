@@ -37,6 +37,7 @@ namespace Farm.AStar
                 //查找最短路径
                 if (FindShortestPath())
                 {
+                    //Debug.Log("构建NPC最短路径");
                     //构建NPC最短路径
                     UpdatePathOnMovementStepStack(sceneName, npcMovementStack);
                 }

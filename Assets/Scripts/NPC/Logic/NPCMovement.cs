@@ -382,7 +382,7 @@ public class NPCMovement : MonoBehaviour
 
         if (stopAnimationClip != null)
         {
-            Debug.Log("EventAnimation启动", stopAnimationClip);
+            //Debug.Log("EventAnimation启动", stopAnimationClip);
             if (anim == null)
             {
                 Debug.Log("anim异常");
@@ -405,15 +405,15 @@ public class NPCMovement : MonoBehaviour
     {
         spriteRenderer.enabled = true;
         coll.enabled = true;
-        // TODO: 影子关闭
-        //transform.GetChild(0).gameObject.SetActive(true);
+        // TODO: 影子关闭和开启， ..下方代码打开，影子关闭，作为测试使用
+        transform.GetChild(0).gameObject.SetActive(true);
     }
     private void SetInactiveInScene()
     {
         spriteRenderer.enabled = false;
         coll.enabled = false;
         // TODO: 影子关闭
-        //transform.GetChild(0).gameObject.SetActive(true);
+        transform.GetChild(0).gameObject.SetActive(true);
     }
     #endregion 
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MapData_SO_Field
   m_EditorClassIdentifier: 
   sceneName: 01_Field
-  gridWidth: 50
+  gridWidth: 52
   gridHeight: 27
   originX: -27
   originY: -10
@@ -1953,6 +1953,12 @@ MonoBehaviour:
   - tileCoordinate: {x: -11, y: 2}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: -10, y: -2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -10, y: -1}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: -10, y: 2}
     gridType: 3
     boolTypeValue: 1
@@ -1977,6 +1983,12 @@ MonoBehaviour:
   - tileCoordinate: {x: -6, y: 5}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: -9}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -5, y: -8}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: -5, y: 5}
     gridType: 3
     boolTypeValue: 1
@@ -1993,6 +2005,18 @@ MonoBehaviour:
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: -5, y: 10}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 1, y: -9}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 1, y: -8}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 2, y: -9}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 2, y: -8}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 11, y: -6}

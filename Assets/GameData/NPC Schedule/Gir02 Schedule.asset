@@ -19,7 +19,7 @@ MonoBehaviour:
     priority: 0
     season: 0
     targetScene: 03_Stall
-    targetGridPosition: {x: -2, y: -5}
+    targetGridPosition: {x: -2, y: -4}
     clipAtStop: {fileID: 7400000, guid: 11ef74d054a7b6e44899ff1975d80539, type: 2}
     interactable: 0
   - hour: 8
@@ -37,6 +37,6 @@ MonoBehaviour:
     priority: 0
     season: 0
     targetScene: 03_Stall
-    targetGridPosition: {x: -3, y: -5}
+    targetGridPosition: {x: -3, y: -4}
     clipAtStop: {fileID: 7400000, guid: 11ef74d054a7b6e44899ff1975d80539, type: 2}
     interactable: 0

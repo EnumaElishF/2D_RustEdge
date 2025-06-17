@@ -2130,16 +2130,25 @@ MonoBehaviour:
   - tileCoordinate: {x: -5, y: -4}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: -4, y: -5}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: -4, y: -2}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: -3, y: -6}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: -3, y: -5}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: -3, y: -2}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: -2, y: -6}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: -2, y: -5}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: -2, y: -2}
@@ -2151,7 +2160,13 @@ MonoBehaviour:
   - tileCoordinate: {x: -1, y: -6}
     gridType: 3
     boolTypeValue: 1
+  - tileCoordinate: {x: -1, y: -5}
+    gridType: 3
+    boolTypeValue: 1
   - tileCoordinate: {x: -1, y: -2}
+    gridType: 3
+    boolTypeValue: 1
+  - tileCoordinate: {x: 0, y: -5}
     gridType: 3
     boolTypeValue: 1
   - tileCoordinate: {x: 0, y: -2}

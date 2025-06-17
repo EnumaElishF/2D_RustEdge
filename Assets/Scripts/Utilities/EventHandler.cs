@@ -1,3 +1,4 @@
+using Farm.Dialogue;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -155,6 +156,16 @@ public static class EventHandler
     public static void CallGenerateCropEvent()
     {
         GenerateCropEvent?.Invoke();
+    }
+
+    /// <summary>
+    /// 传输对话数据到ui：传到ui显示对话
+    /// DialoguePiece : 对话数据
+    /// </summary>
+    public static event Action<DialoguePiece> ShowDialogueEvent;
+    public static void CallShowDialogueEvent(DialoguePiece piece)
+    {
+        ShowDialogueEvent?.Invoke(piece);
     }
 
 }

@@ -805,6 +805,7 @@ MonoBehaviour:
   faceLeft: {fileID: 738924557}
   nameRight: {fileID: 1933840555}
   nameLeft: {fileID: 556591868}
+  continueBox: {fileID: 795680974}
 --- !u!1001 &185257740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2460,7 +2461,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &410869769
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4853,10 +4854,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1341912928}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 141.7265, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 90, y: -20}
+  m_SizeDelta: {x: 141.7265, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1097498926
 MonoBehaviour:
@@ -5769,7 +5770,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 180, y: 0}
+  m_SizeDelta: {x: 180, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1341912929
 MonoBehaviour:

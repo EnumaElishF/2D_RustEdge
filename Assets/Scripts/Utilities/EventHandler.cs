@@ -167,5 +167,12 @@ public static class EventHandler
     {
         ShowDialogueEvent?.Invoke(piece);
     }
-
+    /// <summary>
+    /// 商店开启 :需要背包格子类型去选择背包Prefab，还需要背包数据去生成对应格子数量
+    /// </summary>
+    public static event Action<SlotType, InventoryBag_SO> BaseBagOpenEvent;
+    public static void CallBaseBagOpenEvent(SlotType slotType,InventoryBag_SO bag_SO)
+    {
+        BaseBagOpenEvent?.Invoke(slotType, bag_SO);
+    }
 }

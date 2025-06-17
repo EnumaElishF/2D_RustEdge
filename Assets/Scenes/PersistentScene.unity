@@ -455,6 +455,8 @@ GameObject:
   - component: {fileID: 83130107}
   - component: {fileID: 83130106}
   - component: {fileID: 83130105}
+  - component: {fileID: 83130111}
+  - component: {fileID: 83130110}
   m_Layer: 0
   m_Name: NPC_Girl02
   m_TagString: Untagged
@@ -582,7 +584,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.17117625}
+  m_Offset: {x: -0.02996707, y: -0.940711}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -592,7 +594,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.1990652, y: 0.99766266}
+  m_Size: {x: 3.1169581, y: 3.2214375}
   m_EdgeRadius: 0
 --- !u!212 &83130109
 SpriteRenderer:
@@ -646,6 +648,53 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
+--- !u!114 &83130110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83130103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab0eabc7af0a646b318919f02749c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnFinishEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 83130111}
+        m_TargetAssemblyTypeName: NPCFunction, Assembly-CSharp
+        m_MethodName: OpenShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  dialogueList:
+  - faceImage: {fileID: 21300000, guid: 67d354b9f685e4e1b90255eb84bc5abe, type: 3}
+    onLeft: 1
+    name: Maya
+    dialogueText: "\u6B22\u8FCE\u5149\u4E34,\u770B\u770B\u6709\u4EC0\u4E48\u9700\u8981\u7684\u5417\uFF1F"
+    hasToPause: 1
+    isDone: 0
+--- !u!114 &83130111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83130103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d80efa0d40bc86347aa9ba5820527000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shopData: {fileID: 11400000, guid: 456dbf840bf8d3144beef9d1306eb29e, type: 2}
 --- !u!1 &112001773
 GameObject:
   m_ObjectHideFlags: 0

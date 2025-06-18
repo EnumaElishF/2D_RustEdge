@@ -1,40 +1,51 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TradeUI : MonoBehaviour
+namespace Farm.Inventory
 {
-    public Image itemIcon;
-    public Text itemName;
-    public InputField tradeAmount;
-    public Button submitButton;
-    public Button cancelButton;
-
-    private ItemDetails item;
-    private bool isSellTrade;
-    // 注：因为TradeUI在平时的游戏中是关闭的，所以不会在这里注册事件，我们会用InventoryUI去管理这个TradeUI
-
-    private void Awake()
+    public class TradeUI : MonoBehaviour
     {
-        cancelButton.onClick.AddListener(CancelTrade);
-    }
-    /// <summary>
-    /// 设置TradeUI显示详情
-    /// </summary>
-    /// <param name="item"></param>
-    /// <param name="isSell"></param>
-    public void SetupTradeUI(ItemDetails item,bool isSell)
-    {
-        this.item = item;
-        itemIcon.sprite = item.itemIcon;
-        itemName.text = item.itemName;
-        isSellTrade = isSell;
-        tradeAmount.text = string.Empty;
+        public Image itemIcon;
+        public Text itemName;
+        public InputField tradeAmount;
+        public Button submitButton;
+        public Button cancelButton;
 
-    }
-    private void CancelTrade()
-    {
-        this.gameObject.SetActive(false);
+        private ItemDetails item;
+        private bool isSellTrade;
+        // 注：因为TradeUI在平时的游戏中是关闭的，所以不会在这里注册事件，我们会用InventoryUI去管理这个TradeUI
+
+        private void Awake()
+        {
+            cancelButton.onClick.AddListener(CancelTrade);
+            submitButton.onClick.AddListener(TradeItem);
+        }
+        /// <summary>
+        /// 设置TradeUI显示详情
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="isSell"></param>
+        public void SetupTradeUI(ItemDetails item, bool isSell)
+        {
+            this.item = item;
+            itemIcon.sprite = item.itemIcon;
+            itemName.text = item.itemName;
+            isSellTrade = isSell;
+            tradeAmount.text = string.Empty;
+
+        }
+        private void TradeItem()
+        {
+            var amount = Convert.ToInt32(tradeAmount.text);
+            InventoryManager.Instance.TradeItem(item, amount, isSellTrade);
+            CancelTrade();
+        }
+        private void CancelTrade()
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 }

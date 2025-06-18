@@ -14,6 +14,9 @@ namespace Farm.Inventory
         public ItemDataList_SO itemDataList_SO;
         [Header("背包数据")]
         public InventoryBag_SO playerBag;
+        [Header("交易")]
+        public int playerMoney;
+
 
         private void OnEnable()
         {
@@ -196,6 +199,37 @@ namespace Farm.Inventory
                 playerBag.itemList[index] = item;
             }
             //更新玩家身上对应的列表
+            EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
+        }
+        /// <summary>
+        /// 交易物品 （Player交易金币变化)
+        /// </summary>
+        /// <param name="itemDetails"></param>
+        /// <param name="amount"交易数量></param>
+        /// <param name="isSellTrade"></param>
+        public void TradeItem(ItemDetails itemDetails,int amount,bool isSellTrade)
+        {
+            int cost = itemDetails.itemPrice * amount;
+            //获得物品背包位置
+            int index = GetItemIndexInBag(itemDetails.itemID);
+            if (isSellTrade) //卖
+            {
+                if (playerBag.itemList[index].itemAmount >= amount)
+                {
+                    RemoveItem(itemDetails.itemID, amount);
+                    //卖出总价
+                    cost = (int)(cost * itemDetails.sellPercentage);
+                    playerMoney += cost;
+                }
+            }else if(playerMoney - cost >= 0) //买 :前提判断是要求，玩家现有金额大于cost
+            {
+                if (CheckBagCapacity())
+                {
+                    AddItemAtIndex(itemDetails.itemID, index, amount);
+                }
+                playerMoney -= cost;
+            }
+            //刷新ui
             EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
         }
     }

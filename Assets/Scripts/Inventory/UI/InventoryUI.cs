@@ -1,6 +1,7 @@
 using Farm.Inventory;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,7 @@ namespace Farm.Inventory
 
         [Header("交易UI")]
         public TradeUI tradeUI;
+        public TextMeshProUGUI playerMoneyText;
 
         [SerializeField] private SlotUI[] playerSlots;
         [SerializeField] private List<SlotUI> baseBagSlots;
@@ -56,6 +58,7 @@ namespace Farm.Inventory
             }
             // bagUI.activeInHierarchy 直接返回背包是否开启的bool值
             bagOpened = bagUI.activeInHierarchy;
+            playerMoneyText.text = InventoryManager.Instance.playerMoney.ToString();
         }
         private void Update()
         {
@@ -166,6 +169,7 @@ namespace Farm.Inventory
                     }
                     break;
             }
+            playerMoneyText.text = InventoryManager.Instance.playerMoney.ToString();
         }
         /// <summary>
         /// 打开关闭背包UI， Button调用事件

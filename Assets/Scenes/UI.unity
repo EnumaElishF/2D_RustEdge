@@ -1604,6 +1604,7 @@ MonoBehaviour:
   baseBag: {fileID: 1267825317}
   shopSlotPrefab: {fileID: 6404269063781423568, guid: c7cf084929e15e84e9b1928c969b71a5, type: 3}
   tradeUI: {fileID: 340812765}
+  playerMoneyText: {fileID: 1833160595}
   playerSlots:
   - {fileID: 645372487}
   - {fileID: 1460672137}

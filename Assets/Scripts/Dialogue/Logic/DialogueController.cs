@@ -82,7 +82,7 @@ namespace Farm.Dialogue
 
                 if(OnFinishEvent != null)
                 {
-                    OnFinishEvent?.Invoke();
+                    OnFinishEvent.Invoke();
                     canTalk = false;
                 }
             }

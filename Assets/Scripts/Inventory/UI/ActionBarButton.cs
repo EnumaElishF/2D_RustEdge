@@ -10,7 +10,7 @@ namespace Farm.Inventory
     {
         public KeyCode key;
         private SlotUI slotUI;
-        private bool canUse;
+        private bool canUse = true;
         private void Awake()
         {
             slotUI = GetComponent<SlotUI>();

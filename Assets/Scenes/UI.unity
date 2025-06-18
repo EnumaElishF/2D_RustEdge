@@ -2999,8 +2999,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.6941986, y: 0}
-  m_SizeDelta: {x: -8.7932, y: 0}
+  m_AnchoredPosition: {x: -0.5812, y: 0}
+  m_SizeDelta: {x: -9.0193, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &553523138
 MonoBehaviour:
@@ -3078,8 +3078,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -16.197887, y: 0}
-  m_SizeDelta: {x: -44.0654, y: 0}
+  m_AnchoredPosition: {x: 0.37200165, y: 0}
+  m_SizeDelta: {x: -10.926, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &555846895
 MonoBehaviour:
@@ -3108,7 +3108,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 8
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 5
     m_AlignByGeometry: 0
     m_RichText: 0
     m_HorizontalOverflow: 1
@@ -9911,6 +9911,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 406513142}
+  - {fileID: 1132998940}
   - {fileID: 99710809}
   - {fileID: 169888665}
-  - {fileID: 1132998940}

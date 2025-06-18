@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
 
     private Animator[] animators;
     private bool isMoving;
-    private bool inputDisable; //玩家不能操作
+    private bool inputDisable; //true时玩家不能操作
 
     //动画使用工具
     private float mouseX;
@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadEvent;
         EventHandler.MoveToPosition += OnMoveToPosition;
         EventHandler.MouseClickedEvent += OnMouseClickedEvent;
+        EventHandler.UpdateGameStateEvent += OnUpdateGameStateEvent;
     }
 
 
@@ -46,7 +47,41 @@ public class Player : MonoBehaviour
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadEvent;
         EventHandler.MoveToPosition -= OnMoveToPosition;
         EventHandler.MouseClickedEvent -= OnMouseClickedEvent;
+        EventHandler.UpdateGameStateEvent -= OnUpdateGameStateEvent;
 
+    }
+
+    private void Update()
+    {
+        if (!inputDisable)
+        {
+            PlayerInput();
+        }
+        else
+        {
+            isMoving = false;
+        }
+        SwitchAnimation();
+
+
+    }
+    private void FixedUpdate()
+    {
+        if (!inputDisable)
+            Movement();
+    }
+
+    private void OnUpdateGameStateEvent(GameState gameState)
+    {
+        switch (gameState)
+        {
+            case GameState.GamePlay:
+                inputDisable = false;
+                break;
+            case GameState.Pause:
+                inputDisable = true; 
+                break;
+        }
     }
 
     private void OnMouseClickedEvent(Vector3 mouseWorldPos, ItemDetails itemDetails)
@@ -123,25 +158,7 @@ public class Player : MonoBehaviour
 
 
 
-    private void Update()
-    {
-        if (!inputDisable)
-        {
-            PlayerInput();
-        }
-        else
-        {
-            isMoving = false;
-        }
-        SwitchAnimation();
 
-
-    }
-    private void FixedUpdate()
-    {
-        if(!inputDisable)
-            Movement();
-    }
     private void PlayerInput()
     {
         inputX = Input.GetAxisRaw("Horizontal");

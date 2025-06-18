@@ -67,17 +67,24 @@ namespace Farm.Dialogue
             {
                 //传到ui显示对话
                 EventHandler.CallShowDialogueEvent(result);
+                EventHandler.CallUpdateGameStateEvent(GameState.Pause);
                 //result.isDone为true的话执行
                 yield return new WaitUntil(() => result.isDone);
                 isTalking = false;
             }
             else
             {
+                //对话结束
+                EventHandler.CallUpdateGameStateEvent(GameState.GamePlay);
                 EventHandler.CallShowDialogueEvent(null);
                 FillDialogueStack();
                 isTalking = false;
 
-                OnFinishEvent?.Invoke();
+                if(OnFinishEvent != null)
+                {
+                    OnFinishEvent?.Invoke();
+                    canTalk = false;
+                }
             }
         }
 

@@ -15,11 +15,15 @@ namespace Farm.Inventory
 
         [Header("玩家背包UI")]
         [SerializeField] private GameObject bagUI;
+        private bool bagOpened;
+
         [Header("通用背包")]
         [SerializeField] private GameObject baseBag;
         public GameObject shopSlotPrefab;
 
-        private bool bagOpened;
+
+        [Header("交易UI")]
+        public TradeUI tradeUI;
 
         [SerializeField] private SlotUI[] playerSlots;
         [SerializeField] private List<SlotUI> baseBagSlots;
@@ -29,12 +33,17 @@ namespace Farm.Inventory
             EventHandler.UpdateInventoryUI += OnUpdateInventoryUI;
             EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
             EventHandler.BaseBagOpenEvent += OnBaseBagOpenEvent;
+            EventHandler.BaseBagCloseEvent += OnBaseBagCloseEvent;
+            EventHandler.ShowTradeUI += OnShowTradeUI;
         }
         private void OnDisable()
         {
             EventHandler.UpdateInventoryUI -= OnUpdateInventoryUI;
             EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
             EventHandler.BaseBagOpenEvent -= OnBaseBagOpenEvent;
+            EventHandler.BaseBagCloseEvent -= OnBaseBagCloseEvent;
+            EventHandler.ShowTradeUI -= OnShowTradeUI;
+
         }
 
 
@@ -55,6 +64,16 @@ namespace Farm.Inventory
                 OpenBagUI();
             }
         }
+        private void OnShowTradeUI(ItemDetails item, bool isSell)
+        {
+            tradeUI.gameObject.SetActive(true);
+            tradeUI.SetupTradeUI(item, isSell);
+        }
+        /// <summary>
+        /// 打开通用包裹ui事件
+        /// </summary>
+        /// <param name="slotType"></param>
+        /// <param name="bagData"></param>
         private void OnBaseBagOpenEvent(SlotType slotType, InventoryBag_SO bagData)
         {
             // TODO :通用箱子 Prefab
@@ -75,9 +94,39 @@ namespace Farm.Inventory
             }
             //添加好了格子后，强制刷新baseBag
             LayoutRebuilder.ForceRebuildLayoutImmediate(baseBag.GetComponent<RectTransform>());
-
+            if(slotType == SlotType.Shop)
+            {
+                //通过变更主角背包ui的坐标向右移动-1原点位置，让两个面板到一块
+                bagUI.GetComponent<RectTransform>().pivot = new Vector2(-1, 0.5f);
+                bagUI.SetActive(true);
+                bagOpened = true;
+            }
             //更新UI显示
             OnUpdateInventoryUI(InventoryLocation.Box, bagData.itemList);
+        }
+        /// <summary>
+        /// 关闭通用包裹ui事件
+        /// </summary>
+        /// <param name="slotType"></param>
+        /// <param name="bagData"></param>
+        private void OnBaseBagCloseEvent(SlotType slotType, InventoryBag_SO bagData)
+        {
+            baseBag.SetActive(false);
+            itemToolTip.gameObject.SetActive(false);
+            UpdateSlotHightlight(-1);
+
+            foreach(var slot in baseBagSlots)
+            {
+                Destroy(slot.gameObject);
+            }
+            baseBagSlots.Clear();
+
+            if (slotType == SlotType.Shop)
+            {
+                bagUI.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+                bagUI.SetActive(false);
+                bagOpened = false;
+            }
         }
         private void OnBeforeSceneUnloadEvent()
         {

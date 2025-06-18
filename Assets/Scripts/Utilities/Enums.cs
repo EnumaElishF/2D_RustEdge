@@ -60,3 +60,10 @@ public enum ParticalEffectType
 {
     None,LeaveFalling01, LeaveFalling02,Rock,ReapableScenery
 }
+/// <summary>
+/// 游戏状态：正常运行，暂停
+/// </summary>
+public enum GameState
+{
+    GamePlay,Pause
+}

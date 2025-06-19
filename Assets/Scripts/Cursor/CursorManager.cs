@@ -3,12 +3,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Farm.Map;
+using Farm.Inventory;
 public class CursorManager : MonoBehaviour
 {
     public Sprite normal, tool, seed, item;
     private Sprite currentSprite;  //存储当前图片
     private Image cursorImage;
     private RectTransform cursorCanvas;
+
+    //建造图标跟随
+    private Image buildImage;
+
 
     //鼠标检测
     private Camera mainCamera; //屏幕坐标转换成世界坐标
@@ -44,6 +49,11 @@ public class CursorManager : MonoBehaviour
         //ui组件的Transform都是RectTransform
         cursorCanvas = GameObject.FindGameObjectWithTag("CursorCanvas").GetComponent<RectTransform>();
         cursorImage = cursorCanvas.GetChild(0).GetComponent<Image>();//找固定位置的第一个孩子，记得位置不要拖拽错了更新他的位置
+
+        //拿到建造图标
+        buildImage = cursorCanvas.GetChild(1).GetComponent<Image>();
+        buildImage.gameObject.SetActive(false);
+
         currentSprite = normal;
         SetCursorImage(normal);
 
@@ -60,6 +70,8 @@ public class CursorManager : MonoBehaviour
 
         if (!InteractWithUI() && cursorEnable) //同时要求鼠标可用
         {
+            Debug.Log("检查使用");
+
             SetCursorImage(currentSprite);
             CheckCursorValid();
             CheckPlayerInput();
@@ -67,6 +79,8 @@ public class CursorManager : MonoBehaviour
         else
         {
             SetCursorImage(normal);
+            //TODO 检查问题!!!!
+            buildImage.gameObject.SetActive(false);
         }
 
     }
@@ -117,6 +131,7 @@ public class CursorManager : MonoBehaviour
     {
         cursorPositionValid = true;
         cursorImage.color = new Color(1, 1, 1, 1);
+        buildImage.color = new Color(1, 1, 1, 0.8f);
     }
 
     /// <summary>
@@ -126,6 +141,8 @@ public class CursorManager : MonoBehaviour
     {
         cursorPositionValid = false;
         cursorImage.color = new Color(1, 0, 0, 0.4f);
+        buildImage.color = new Color(1, 0, 0, 0.5f);
+
     }
 
     #endregion
@@ -143,6 +160,8 @@ public class CursorManager : MonoBehaviour
             //物品没有被选中。也就是鼠标没有选中任何东西
             cursorEnable = false;
             currentSprite = normal;
+            buildImage.gameObject.SetActive(false); //取消选择就关闭建造图
+
         }
         else
         {
@@ -159,21 +178,34 @@ public class CursorManager : MonoBehaviour
                 ItemType.ReapTool => tool,
                 ItemType.Furniture => tool,
                 ItemType.CollectTool => tool,
-                _ => normal
+                _ => normal,
             };
             cursorEnable = true;
 
+            //显示建造物品图片
+            if (itemDetails.itemType == ItemType.Furniture)
+            {
+                buildImage.gameObject.SetActive(true);
+                buildImage.sprite = itemDetails.itemOnWorldSprite;
+                buildImage.SetNativeSize();
+            }
         }
 
     }
-
+    /// <summary>
+    /// 检测鼠标指针是否可用
+    /// </summary>
     private void CheckCursorValid()
     {
-        //检测鼠标指针是否可用
+        //拿到摄像机坐标，鼠标坐标，让图片跟随他启动
+
         mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y,-mainCamera.transform.position.z));
         mouseGridPos = currentGrid.WorldToCell(mouseWorldPos);
 
         var playerGridPos = currentGrid.WorldToCell(PlayerTransform.position);
+
+        //建造图片跟随移动
+        buildImage.rectTransform.position = Input.mousePosition;
 
         //判断 物品的放置，不能超出 在设定可在地上的 范围内
         if(Mathf.Abs(mouseGridPos.x - playerGridPos.x)>currentItem.itemUseRadius || Mathf.Abs(mouseGridPos.y - playerGridPos.y) > currentItem.itemUseRadius)
@@ -238,6 +270,13 @@ public class CursorManager : MonoBehaviour
                 case ItemType.ReapTool:
                     if (GridMapManager.Instance.HaveReapableItemsInRadiusNew(mouseWorldPos,currentItem)) SetCursorValid(); else SetCursorInValid();
                     break;
+                case ItemType.Furniture:
+                    buildImage.gameObject.SetActive(true);
+                    if (currentTile.canPlaceFurniture && InventoryManager.Instance.CheckStock(currentItem.itemID))
+                        SetCursorValid();
+                    else
+                        SetCursorInValid();
+                    break;
             }
         }
         else
@@ -245,19 +284,17 @@ public class CursorManager : MonoBehaviour
             SetCursorInValid();
         }
     }
+
     /// <summary>
-    /// 是否与ui互动
+    /// 是否与UI互动
     /// </summary>
     /// <returns></returns>
     private bool InteractWithUI()
     {
-        if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 }

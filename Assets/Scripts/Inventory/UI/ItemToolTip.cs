@@ -63,7 +63,7 @@ public class ItemToolTip : MonoBehaviour
     }
     public void SetupResourcePanel(int ID)
     {
-        var bluePrintDetails = InventoryManager.Instance.bluPrintData.GetBluePrintDetails(ID);
+        var bluePrintDetails = InventoryManager.Instance.bluePrintData.GetBluePrintDetails(ID);
         for (int i = 0; i < resourceItem.Length; i++) //限制只显示3个
         {
             if (i < bluePrintDetails.resourceItem.Length)

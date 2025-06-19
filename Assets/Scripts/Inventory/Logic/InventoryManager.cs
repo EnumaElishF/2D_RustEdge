@@ -13,7 +13,7 @@ namespace Farm.Inventory
         [Header("物品数据")]
         public ItemDataList_SO itemDataList_SO;
         [Header("建造蓝图")]
-        public BluPrintDataList_SO bluPrintData;
+        public BluePrintDataList_SO bluePrintData;
         [Header("背包数据")]
         public InventoryBag_SO playerBag;
         [Header("交易")]
@@ -24,11 +24,14 @@ namespace Farm.Inventory
         {
             EventHandler.DropItemEvent += OnDropItemEvent;
             EventHandler.HarvestAtPlayerPosition += OnHarvestAtPlayerPosition;
+            //建造
+            EventHandler.BuildFurnitureEvent += OnBuildFurnitureEvent;
         }
         private void OnDisable()
         {
             EventHandler.DropItemEvent -= OnDropItemEvent;
             EventHandler.HarvestAtPlayerPosition -= OnHarvestAtPlayerPosition;
+            EventHandler.BuildFurnitureEvent -= OnBuildFurnitureEvent;
 
         }
 
@@ -39,6 +42,21 @@ namespace Farm.Inventory
             //游戏开始时，更新一次ui
             EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
         }
+        /// <summary>
+        /// OnBuildFurnitureEvent：建造事件的移除物品
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="mousePos"></param>
+        private void OnBuildFurnitureEvent(int ID, Vector3 mousePos)
+        {
+            RemoveItem(ID, 1);
+            BluePrintDetails bluePrint = bluePrintData.GetBluePrintDetails(ID);
+            foreach(var item in bluePrint.resourceItem)
+            {
+                RemoveItem(item.itemID, item.itemAmount);
+            }
+        }
+
 
         /// <summary>
         /// 拖拽扔一次物品
@@ -234,6 +252,27 @@ namespace Farm.Inventory
             //刷新ui
             EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
         }
+        /// <summary>
+        /// 检查建筑资源所需物品库存情况
+        /// </summary>
+        /// <param name="ID">图纸ID</param>
+        /// <returns></returns>
+        public bool CheckStock(int ID)
+        {
+            var bluePrintDetails = bluePrintData.GetBluePrintDetails(ID);
+            foreach(var resourceItem in bluePrintDetails.resourceItem)
+            {
+                var itemStock = playerBag.GetInventoryItem(resourceItem.itemID);
+                if (itemStock.itemAmount >= resourceItem.itemAmount)
+                {
+                    continue;
+                }
+                else return false;
+            }
+            //如果蓝图所需材料的：每一个现有库存itemStock数量都是足够的，那么返回true
+            return true;
+        }
+
     }
 }
 

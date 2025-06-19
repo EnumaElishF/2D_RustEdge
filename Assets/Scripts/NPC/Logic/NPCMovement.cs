@@ -416,7 +416,7 @@ public class NPCMovement : MonoBehaviour
         spriteRenderer.enabled = false;
         coll.enabled = false;
         // TODO: Ó°×Ó¹Ø±Õ
-        transform.GetChild(0).gameObject.SetActive(true);
+        transform.GetChild(0).gameObject.SetActive(false);
     }
     #endregion 
 }

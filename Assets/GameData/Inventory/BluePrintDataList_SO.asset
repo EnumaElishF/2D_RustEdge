@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aac8324a4be4ad54196c9b8b1409d379, type: 3}
-  m_Name: BluPrintDataList_SO
+  m_Name: BluePrintDataList_SO
   m_EditorClassIdentifier: 
   bluePrintDataList:
   - ID: 1050

@@ -25,6 +25,8 @@ namespace Farm.Inventory
             EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
             //创建切换后
             EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadEvent;
+            //建造
+            EventHandler.BuildFurnitureEvent += OnBuildFurnitureEvent;
         }
 
         private void OnDisable()
@@ -33,10 +35,19 @@ namespace Farm.Inventory
             EventHandler.DropItemEvent -= OnDropItemEvent;
             EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
             EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadEvent;
+            EventHandler.BuildFurnitureEvent -= OnBuildFurnitureEvent;
 
         }
-
-
+        /// <summary>
+        /// OnBuildFurnitureEvent: 建造事件的 在场景上进行物品生成
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="mousePos"></param>
+        private void OnBuildFurnitureEvent(int ID, Vector3 mousePos)
+        {
+            BluePrintDetails bluePrint = InventoryManager.Instance.bluePrintData.GetBluePrintDetails(ID);
+            var buildItem = Instantiate(bluePrint.buildPrefab, mousePos, Quaternion.identity, itemParent);
+        }
 
         private void OnBeforeSceneUnloadEvent()
         {

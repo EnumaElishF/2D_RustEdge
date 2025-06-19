@@ -239,6 +239,12 @@ namespace Farm.Map
                                 break;
                         }
                         break;
+                    case ItemType.Furniture:
+                        //在地图上生成物品 ItemManager
+                        //移除当前物品(图纸) InventoryManager
+                        //移除资源物品 InventoryManager
+                        EventHandler.CallBuildFurnitureEvent(itemDetails.itemID,mouseWorldPos);
+                        break;
                 }
                 UpdateTileDetails(currentTile);
             }

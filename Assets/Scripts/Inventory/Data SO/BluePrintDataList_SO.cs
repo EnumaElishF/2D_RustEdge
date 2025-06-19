@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BluPrintDataList_SO",menuName = "Inventory/BluPrintDataList_SO")]
-public class BluPrintDataList_SO : ScriptableObject
+[CreateAssetMenu(fileName = "BluePrintDataList_SO",menuName = "Inventory/BluePrintDataList_SO")]
+public class BluePrintDataList_SO : ScriptableObject
 {
     public List<BluePrintDetails> bluePrintDataList;
     public BluePrintDetails GetBluePrintDetails(int itemID)

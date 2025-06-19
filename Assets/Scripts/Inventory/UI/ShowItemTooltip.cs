@@ -25,6 +25,17 @@ namespace Farm.Inventory
                 //详情面板位置展示在触控的附件
                 inventoryUI.itemToolTip.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0);
                 inventoryUI.itemToolTip.transform.position = transform.position + Vector3.up * 60;
+
+                if (slotUI.itemDetails.itemType == ItemType.Furniture)
+                {
+                    inventoryUI.itemToolTip.resourcePanel.SetActive(true);
+                    inventoryUI.itemToolTip.SetupResourcePanel(slotUI.itemDetails.itemID);
+                }
+                else
+                {
+                    //非Furniture的物品不展示，关闭建造材料栏
+                    inventoryUI.itemToolTip.resourcePanel.SetActive(false);
+                }
             }
             else
             {

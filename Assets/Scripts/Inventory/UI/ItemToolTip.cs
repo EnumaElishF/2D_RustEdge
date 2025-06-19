@@ -1,3 +1,4 @@
+using Farm.Inventory;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,6 +11,11 @@ public class ItemToolTip : MonoBehaviour
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Text valueText;
     [SerializeField] private GameObject bottomPart;
+    [Header("建造")]
+    public GameObject resourcePanel;
+    [SerializeField] private Image[] resourceItem;
+
+
 
     //为了能够在买卖物品时，买入商店的价格是全价，卖出价格按itemDetails的sellPercentage进行比例折损，需要SlotType判断插槽类型，包括背包，容器，商店，等
     public void SetupTooltip(ItemDetails itemDetails,SlotType slotType)
@@ -54,5 +60,23 @@ public class ItemToolTip : MonoBehaviour
             _ => "无"
 
         };
+    }
+    public void SetupResourcePanel(int ID)
+    {
+        var bluePrintDetails = InventoryManager.Instance.bluPrintData.GetBluePrintDetails(ID);
+        for (int i = 0; i < resourceItem.Length; i++) //限制只显示3个
+        {
+            if (i < bluePrintDetails.resourceItem.Length)
+            {
+                var item = bluePrintDetails.resourceItem[i];
+                resourceItem[i].gameObject.SetActive(true); //有几个资源，就对应激活显示几个
+                resourceItem[i].sprite = InventoryManager.Instance.GetItemDetails(item.itemID).itemIcon;
+                resourceItem[i].transform.GetChild(0).GetComponent<Text>().text = item.itemAmount.ToString();
+            }
+            else
+            {  //超出了bluePrintDetails.resourceItem.Length，就关上
+                resourceItem[i].gameObject.SetActive(false);
+            }
+        }
     }
 }

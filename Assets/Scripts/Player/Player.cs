@@ -109,6 +109,9 @@ public class Player : MonoBehaviour
         {
             //种子，商品，家具直接在地面生成
             //防止还没举起斧子，树就倒了，这种情况。所以事件控制 物品变化的执行，要在角色动画之后
+
+            // TODO 做点击鼠标时，提示一下，为什么不能做，例如建筑材料不足等原因
+
             EventHandler.CallExecuteActionAfterAnimation(mouseWorldPos, itemDetails); //因为很多动作都涉及到修改动作信息，所以对ExecuteActionAfterAnimation调用，放在GridMapManager
         }
     }

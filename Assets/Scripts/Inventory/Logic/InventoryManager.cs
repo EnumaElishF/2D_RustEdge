@@ -267,7 +267,12 @@ namespace Farm.Inventory
                 {
                     continue;
                 }
-                else return false;
+                else
+                {
+                    //TODO :角色提醒对话上,提示材料不足 (做一个角色说话的提示录，在这里编入字符串，直接展示到上面，但是好像不适合非程序员做？)
+                    Debug.Log("建筑所需材料不足");
+                    return false;
+                }
             }
             //如果蓝图所需材料的：每一个现有库存itemStock数量都是足够的，那么返回true
             return true;

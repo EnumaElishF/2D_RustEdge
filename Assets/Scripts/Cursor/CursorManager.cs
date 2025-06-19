@@ -70,8 +70,6 @@ public class CursorManager : MonoBehaviour
 
         if (!InteractWithUI() && cursorEnable) //同时要求鼠标可用
         {
-            Debug.Log("检查使用");
-
             SetCursorImage(currentSprite);
             CheckCursorValid();
             CheckPlayerInput();

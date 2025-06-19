@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,6 +69,16 @@ public class SerializableVector3
 [System.Serializable]
 public class SceneItem
 {
+    public int itemID;
+    public SerializableVector3 position;
+}
+/// <summary>
+/// 存储 建造类型的物品
+/// </summary>
+[System.Serializable]
+public class SceneFurniture
+{
+    //TODO 更多属性信息，例如BOX序号储物序号
     public int itemID;
     public SerializableVector3 position;
 }

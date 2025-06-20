@@ -49,6 +49,11 @@ namespace Farm.Inventory
         {
             BluePrintDetails bluePrint = InventoryManager.Instance.bluePrintData.GetBluePrintDetails(ID);
             var buildItem = Instantiate(bluePrint.buildPrefab, mousePos, Quaternion.identity, itemParent);
+            if (buildItem.GetComponent<Box>())
+            {
+                buildItem.GetComponent<Box>().index = InventoryManager.Instance.BoxDataAmount;
+                buildItem.GetComponent<Box>().InitBox(buildItem.GetComponent<Box>().index);
+            }
         }
 
         private void OnBeforeSceneUnloadEvent()
@@ -169,6 +174,9 @@ namespace Farm.Inventory
                     itemID = item.itemID,
                     position = new SerializableVector3(item.transform.position) //坐标是当前循环物品的坐标
                 };
+                if (item.GetComponent<Box>())
+                    sceneFurniture.boxIndex = item.GetComponent<Box>().index;
+
                 currentSceneFurniture.Add(sceneFurniture);
             }
             if (sceneFurnitureDict.ContainsKey(SceneManager.GetActiveScene().name))
@@ -194,7 +202,12 @@ namespace Farm.Inventory
                     foreach (SceneFurniture sceneFurniture in currentSceneFurniture)
                     {
                         //场景上创建家具
-                        OnBuildFurnitureEvent(sceneFurniture.itemID, sceneFurniture.position.ToVector3());
+                        BluePrintDetails bluePrint = InventoryManager.Instance.bluePrintData.GetBluePrintDetails(sceneFurniture.itemID);
+                        var buildItem = Instantiate(bluePrint.buildPrefab, sceneFurniture.position.ToVector3(), Quaternion.identity, itemParent);
+                        if (buildItem.GetComponent<Box>())
+                        {
+                            buildItem.GetComponent<Box>().InitBox(sceneFurniture.boxIndex);
+                        }
                     }
                 }
             }

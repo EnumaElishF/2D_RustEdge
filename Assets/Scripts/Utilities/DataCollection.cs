@@ -78,9 +78,9 @@ public class SceneItem
 [System.Serializable]
 public class SceneFurniture
 {
-    //TODO 更多属性信息，例如BOX序号储物序号
     public int itemID;
     public SerializableVector3 position;
+    public int boxIndex;//储物序号
 }
 /// <summary>
 /// 瓦片格子属性

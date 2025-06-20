@@ -24,6 +24,19 @@ namespace Farm.Inventory
         //物品信息
         public ItemDetails itemDetails;
         public int itemAmount;
+
+        public InventoryLocation Location
+        {
+            get
+            {
+                return slotType switch
+                {
+                    SlotType.Bag => InventoryLocation.Player,
+                    SlotType.Box => InventoryLocation.Box,
+                    _ => InventoryLocation.Player   //交换的时，没有触发不能返回空，那么返回Player默认自己的原格子
+                };
+            }
+        }
         public InventoryUI inventoryUI => GetComponentInParent<InventoryUI>();
 
         private void Start()
@@ -113,18 +126,28 @@ namespace Farm.Inventory
                 }
                 var targetSlot = eventData.pointerCurrentRaycast.gameObject.GetComponent<SlotUI>();
                 int targetIndex = targetSlot.slotIndex;
-                //在Player自身背包范围内交换
+                
                 if(slotType == SlotType.Bag && targetSlot.slotType == SlotType.Bag)
                 {
+                    //仅限Player自身背包范围内交换
                     InventoryManager.Instance.SwapItem(slotIndex, targetIndex);
                 }
-                else if (slotType == SlotType.Shop && targetSlot.slotType == SlotType.Bag) //买
+                else if (slotType == SlotType.Shop && targetSlot.slotType == SlotType.Bag) 
                 {
+                    //商店：买
                     EventHandler.CallShowTradeUI(itemDetails, false);
                 }
-                else if (slotType == SlotType.Bag && targetSlot.slotType == SlotType.Shop) //卖
+                else if (slotType == SlotType.Bag && targetSlot.slotType == SlotType.Shop) 
                 {
+                    //商店：卖
                     EventHandler.CallShowTradeUI(itemDetails, true);
+                }
+                else if(slotType != SlotType.Shop && targetSlot.slotType != SlotType.Shop && slotType!= targetSlot.slotType)
+                {
+                    //排除商店，限定为箱子上的交换
+                    //跨背包数据，交换物品
+                    InventoryManager.Instance.SwapItem(Location, slotIndex, targetSlot.Location, targetSlot.slotIndex);
+
                 }
 
                 //清空所有高亮显示

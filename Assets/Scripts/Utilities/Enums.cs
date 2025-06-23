@@ -67,3 +67,10 @@ public enum GameState
 {
     GamePlay,Pause
 }
+/// <summary>
+/// ÔçÍíµÆ¹âµÄÇÐ»»
+/// </summary>
+public enum LightShift
+{
+    Morning,Night
+}

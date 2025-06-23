@@ -6155,6 +6155,7 @@ GameObject:
   m_Component:
   - component: {fileID: 456913827}
   - component: {fileID: 456913828}
+  - component: {fileID: 456913829}
   m_Layer: 0
   m_Name: Light 2D
   m_TagString: Untagged
@@ -6229,6 +6230,19 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   - {x: 0.5, y: 0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
+--- !u!114 &456913829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 456913826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d445870919607f2418c4337867bc9b02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightData: {fileID: 11400000, guid: a984dd6648c1d5e48b581a3498534280, type: 2}
 --- !u!1 &494624139
 GameObject:
   m_ObjectHideFlags: 0
@@ -19961,6 +19975,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1207574887}
   - component: {fileID: 1207574888}
+  - component: {fileID: 1207574889}
   m_Layer: 0
   m_Name: Light 2D
   m_TagString: Untagged
@@ -20035,6 +20050,19 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   - {x: 0.5, y: 0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
+--- !u!114 &1207574889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207574886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d445870919607f2418c4337867bc9b02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightData: {fileID: 11400000, guid: a984dd6648c1d5e48b581a3498534280, type: 2}
 --- !u!1001 &1234422199
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23714,8 +23742,8 @@ MonoBehaviour:
   m_LightType: 4
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
-  m_Color: {r: 0.32306862, g: 0.42404258, b: 0.9339623, a: 1}
-  m_Intensity: 0.19
+  m_Color: {r: 0.16862746, g: 0.23921569, b: 0.9529412, a: 1}
+  m_Intensity: 0.37
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000dfc922298d4c93821f8a88646976e1dc4b43774fbd6cca3f47130d7bb9843ff4f75bd1ecf7ba209f1f302646

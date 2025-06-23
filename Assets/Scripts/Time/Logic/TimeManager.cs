@@ -12,6 +12,9 @@ public class TimeManager : Singleton<TimeManager>
     public bool gameClockPause;//时间暂停
     private float tikTime;
 
+    //灯光时间差
+    private float timeDifference;
+
     public TimeSpan GameTime => new TimeSpan(gameHour, gameMinute, gameSecond);
 
     protected override void Awake()
@@ -49,6 +52,9 @@ public class TimeManager : Singleton<TimeManager>
         //Event C# 中实现发布 - 订阅模式的语言特性 ,类似订阅+监听的模式
         EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
         EventHandler.CallGameMinuteEvent(gameMinute, gameHour,gameDay,gameSeason);
+
+        //切换灯光
+        EventHandler.CallLightShiftChangeEvent(gameSeason, GetCurrentLightShift(), timeDifference);
     }
     private void Update()
     {
@@ -137,7 +143,28 @@ public class TimeManager : Singleton<TimeManager>
             }
             //秒的变化
             EventHandler.CallGameMinuteEvent(gameMinute, gameHour, gameDay, gameSeason);
+            //切换灯光
+            EventHandler.CallLightShiftChangeEvent(gameSeason, GetCurrentLightShift(), timeDifference);
         }
         //Debug.Log("Second:" + gameSecond + "Minute:" + gameMinute);
+    }
+    /// <summary>
+    /// 返回lightShift，同时计算时间差
+    /// </summary>
+    /// <returns></returns>
+    private LightShift GetCurrentLightShift()
+    {
+        if(GameTime >= Settings.morningTime && GameTime < Settings.nightTime)
+        {
+            timeDifference = (float)(GameTime - Settings.morningTime).TotalMinutes;
+            return LightShift.Morning;
+        }
+        if(GameTime<Settings.morningTime || GameTime>= Settings.nightTime)
+        {
+            timeDifference = Mathf.Abs((float)(GameTime - Settings.nightTime).TotalMinutes);
+            Debug.Log(timeDifference);
+            return LightShift.Night;
+        }
+        return LightShift.Morning;
     }
 }

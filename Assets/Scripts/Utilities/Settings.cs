@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,8 @@ public class Settings
 
     /// <summary>
     /// 时间相关
+    /// T快速跳过时间，作为时间调试
+    /// G快速加天数
     /// </summary>
     public const float secondThreshold = 0.01f;    //数值越小，时间越快
     public const int secondHold = 59;
@@ -41,4 +44,8 @@ public class Settings
     public const float animationBreakTime = 5f; //动画间隔时间
     public const int maxGridSize = 9999; //最大网格尺寸：超出9999就做判断
 
+    //灯光
+    public const float lightChangeDuration = 25f;
+    public static TimeSpan morningTime = new TimeSpan(5, 0, 0);
+    public static TimeSpan nightTime = new TimeSpan(19, 0, 0);
 }

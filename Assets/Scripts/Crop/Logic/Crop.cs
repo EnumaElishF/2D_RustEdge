@@ -50,6 +50,10 @@ public class Crop : MonoBehaviour
             if(cropDetails.hasParticalEffect) //如果不加hasParticalEffect，判断，那么没有特效的也会调用这个，就会产生报错
                 EventHandler.CalllParticleEffectEvent(cropDetails.effectType, transform.position + cropDetails.effectPos);
             //播放声音
+            if(cropDetails.soundEffect != SoundName.none)
+            {
+                EventHandler.CallPlaySoundEvent(cropDetails.soundEffect);
+            }
         }
 
         if (harvestActionCount>= requireActionCount)
@@ -72,6 +76,9 @@ public class Crop : MonoBehaviour
                 {
                     anim.SetTrigger("FallingLeft");
                 }
+                //加入树倒下的音效
+                EventHandler.CallPlaySoundEvent(SoundName.TreeFalling);
+
                 StartCoroutine(HarvestAfterAnimation());
             }
         }

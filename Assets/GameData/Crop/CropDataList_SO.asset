@@ -42,6 +42,7 @@ MonoBehaviour:
     hasParticalEffect: 0
     effectType: 0
     effectPos: {x: 0, y: 0, z: 0}
+    soundEffect: 8
   - seedItemID: 1025
     growthDays: 0100000002000000020000000300000003000000
     growthPrefabs:
@@ -71,6 +72,7 @@ MonoBehaviour:
     hasParticalEffect: 0
     effectType: 0
     effectPos: {x: 0, y: 0, z: 0}
+    soundEffect: 8
   - seedItemID: 1023
     growthDays: 0100000002000000020000000300000003000000
     growthPrefabs:
@@ -100,6 +102,7 @@ MonoBehaviour:
     hasParticalEffect: 0
     effectType: 0
     effectPos: {x: 0, y: 0, z: 0}
+    soundEffect: 8
   - seedItemID: 1016
     growthDays: 0100000002000000020000000300000003000000
     growthPrefabs:
@@ -129,6 +132,7 @@ MonoBehaviour:
     hasParticalEffect: 1
     effectType: 1
     effectPos: {x: 0, y: 2.5, z: 0}
+    soundEffect: 3
   - seedItemID: 1017
     growthDays: 00000000
     growthPrefabs:
@@ -150,6 +154,7 @@ MonoBehaviour:
     hasParticalEffect: 0
     effectType: 0
     effectPos: {x: 0, y: 0, z: 0}
+    soundEffect: 3
   - seedItemID: 1019
     growthDays: 0100000003000000030000000500000005000000
     growthPrefabs:
@@ -179,6 +184,7 @@ MonoBehaviour:
     hasParticalEffect: 1
     effectType: 2
     effectPos: {x: 0, y: 2.5, z: 0}
+    soundEffect: 3
   - seedItemID: 1020
     growthDays: 00000000
     growthPrefabs:
@@ -200,6 +206,7 @@ MonoBehaviour:
     hasParticalEffect: 0
     effectType: 0
     effectPos: {x: 0, y: 0, z: 0}
+    soundEffect: 3
   - seedItemID: 1021
     growthDays: 00000000
     growthPrefabs:
@@ -221,6 +228,7 @@ MonoBehaviour:
     hasParticalEffect: 1
     effectType: 3
     effectPos: {x: 0, y: 1.2, z: 0}
+    soundEffect: 4
   - seedItemID: 1022
     growthDays: 00000000
     growthPrefabs:
@@ -242,6 +250,7 @@ MonoBehaviour:
     hasParticalEffect: 1
     effectType: 3
     effectPos: {x: 0, y: 1.5, z: 0}
+    soundEffect: 4
   - seedItemID: 1041
     growthDays: 00000000
     growthPrefabs:
@@ -263,6 +272,7 @@ MonoBehaviour:
     hasParticalEffect: 1
     effectType: 4
     effectPos: {x: 0, y: 1, z: 0}
+    soundEffect: 6
   - seedItemID: 1042
     growthDays: 00000000
     growthPrefabs:
@@ -284,6 +294,7 @@ MonoBehaviour:
     hasParticalEffect: 1
     effectType: 4
     effectPos: {x: 0, y: 1, z: 0}
+    soundEffect: 6
   - seedItemID: 1043
     growthDays: 00000000
     growthPrefabs:
@@ -305,3 +316,4 @@ MonoBehaviour:
     hasParticalEffect: 1
     effectType: 4
     effectPos: {x: 0, y: 1, z: 0}
+    soundEffect: 6

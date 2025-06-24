@@ -202,6 +202,9 @@ namespace Farm.Map
                     case ItemType.Seed:
                         EventHandler.CallPlantSeedEvent(itemDetails.itemID, currentTile); //更新农作物
                         EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos,itemDetails.itemType);
+                        //音效
+                        EventHandler.CallPlaySoundEvent(SoundName.Plant);
+
                         break;
                     case ItemType.Commodity:
                         EventHandler.CallDropItemEvent(itemDetails.itemID, mouseWorldPos, itemDetails.itemType); //生成物品（物品实例化）
@@ -212,11 +215,13 @@ namespace Farm.Map
                         currentTile.canDig = false;
                         currentTile.canDropItem = false;
                         //音效
+                        EventHandler.CallPlaySoundEvent(SoundName.Hoe);
                         break;
                     case ItemType.WaterTool:
                         SetWaterGround(currentTile);
                         currentTile.daySinceWatered = 0;
                         //音效
+                        EventHandler.CallPlaySoundEvent(SoundName.Water);
                         break;
                     case ItemType.BreakTool:
                     case ItemType.ChopTool:
@@ -238,6 +243,8 @@ namespace Farm.Map
                             if (reapCount >= Settings.reapAmount)
                                 break;
                         }
+                        //割草音效
+                        EventHandler.CallPlaySoundEvent(SoundName.Reap);
                         break;
                     case ItemType.Furniture:
                         //在地图上生成物品 ItemManager

@@ -215,4 +215,20 @@ public static class EventHandler
     {
         LightShiftChangeEvent?.Invoke(season, lightShift,timeDifference);
     }
+    /// <summary>
+    /// 音效
+    /// </summary>
+    public static event Action<SoundDetails> InitSoundEffect;
+    public static void CallInitSoundEffect(SoundDetails soundDetails)
+    {
+        InitSoundEffect?.Invoke(soundDetails);
+    }
+    /// <summary>
+    /// 玩家进行动作的音效, 通过在AudioManager订阅，做到，只需要写入音效名称，就能做到，生成音效的功能
+    /// </summary>
+    public static event Action<SoundName> PlaySoundEvent;
+    public static void CallPlaySoundEvent(SoundName soundName)
+    {
+        PlaySoundEvent?.Invoke(soundName);
+    }
 }

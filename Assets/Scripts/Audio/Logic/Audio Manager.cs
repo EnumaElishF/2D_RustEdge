@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
     [Header("音乐数据库")]
     public SoundDetailsList_SO soundDetailsData;
@@ -27,11 +27,25 @@ public class AudioManager : MonoBehaviour
     private void OnEnable()
     {
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
+        EventHandler.PlaySoundEvent += OnPlaySoundEvent;
     }
     private void OnDisable()
     {
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
+        EventHandler.PlaySoundEvent -= OnPlaySoundEvent;
 
+    }
+    /// <summary>
+    /// 实现一个音效的接力，通过音效名称，去调用本次音效的生成
+    /// </summary>
+    /// <param name="soundName"></param>
+    private void OnPlaySoundEvent(SoundName soundName)
+    {
+        var soundDetails = soundDetailsData.GetSoundDetails(soundName);
+        if (soundDetails != null)
+        {
+            EventHandler.CallInitSoundEffect(soundDetails);
+        }
     }
 
     private void OnAfterSceneLoadedEvent()

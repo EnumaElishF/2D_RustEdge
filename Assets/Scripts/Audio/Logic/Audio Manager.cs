@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 public class AudioManager : MonoBehaviour
 {
@@ -11,6 +12,16 @@ public class AudioManager : MonoBehaviour
     public AudioSource gameSource;
 
     private Coroutine soundRoutine;
+
+    [Header("Audio Mixer")]
+    public AudioMixer audioMixer;
+
+    [Header("Snapshots")]
+    public AudioMixerSnapshot normalSnapShot;
+    public AudioMixerSnapshot ambientSnapShot;
+    public AudioMixerSnapshot muteSnapShot; //Mute的时候，直接把Master关掉就没有声音了
+    private float musicTransitionSecond = 8f;
+
     public float MusicStartSecond => Random.Range(5f, 15f);
 
     private void OnEnable()
@@ -38,24 +49,25 @@ public class AudioManager : MonoBehaviour
             StopCoroutine(soundRoutine);
 
         //播放音效
-        soundRoutine = StartCoroutine(PlaySoundRoutinne(music, ambient));
+        soundRoutine = StartCoroutine(PlaySoundRoutine(music, ambient));
 
     }
     /// <summary>
     /// 通过协程让我们的背景音乐等待一段随机时间，再去播放，一开始只播放环境音效
+    /// 音效过渡！
     /// </summary>
     /// <param name="music"></param>
     /// <param name="ambient"></param>
     /// <returns></returns>
-    private IEnumerator PlaySoundRoutinne(SoundDetails music,SoundDetails ambient)
+    private IEnumerator PlaySoundRoutine(SoundDetails music,SoundDetails ambient)
     {
         if(music!=null && ambient!= null)
         {
-            PlayAmbientClip(ambient);
+            PlayAmbientClip(ambient,1f); //1秒就切换到AmbientOnly，这样就立马暂停了Music
             //随机暂停协程的时间，协程等待MusicStartSecond秒
             yield return new WaitForSeconds(MusicStartSecond);
-            //暂停结束后，执行背景音乐
-            PlayMusicClip(music);
+            //暂停结束后，执行背景音乐，经过几秒缓慢从-80，涨到指定的音量
+            PlayMusicClip(music,musicTransitionSecond);
         }
     }
 
@@ -63,20 +75,32 @@ public class AudioManager : MonoBehaviour
     /// 播放背景音乐
     /// </summary>
     /// <param name="soundDetails"></param>
-    private void PlayMusicClip(SoundDetails soundDetails)
+    private void PlayMusicClip(SoundDetails soundDetails,float transitionTime)
     {
+        audioMixer.SetFloat("MusicVolume", ConvertSoundVolume(soundDetails.soundVolume));
         gameSource.clip = soundDetails.soundClip;
         if (gameSource.isActiveAndEnabled) //因为在进入房间等情况会有关闭背景音乐的情况，所有需要控制在可用的时候启动音乐
             gameSource.Play();
+
+        normalSnapShot.TransitionTo(transitionTime);
     }
     /// <summary>
     /// 播放环境音效
     /// </summary>
     /// <param name="soundDetails"></param>
-    private void PlayAmbientClip(SoundDetails soundDetails)
+    private void PlayAmbientClip(SoundDetails soundDetails, float transitionTime)
     {
+        audioMixer.SetFloat("AmbientVolume", ConvertSoundVolume(soundDetails.soundVolume));
+
         ambientSource.clip = soundDetails.soundClip;
         if (ambientSource.isActiveAndEnabled)
             ambientSource.Play();
+
+        ambientSnapShot.TransitionTo(transitionTime);
+    }
+
+    private float ConvertSoundVolume(float amount)
+    {
+        return (amount * 100 - 80);
     }
 }

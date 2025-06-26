@@ -159,7 +159,7 @@ public static class EventHandler
     }
 
     /// <summary>
-    /// 传输对话数据到ui：传到ui显示对话
+    /// 弹出Dialogue对话框,传输对话数据到ui：传到ui显示对话
     /// DialoguePiece : 对话数据
     /// </summary>
     public static event Action<DialoguePiece> ShowDialogueEvent;

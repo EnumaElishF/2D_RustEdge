@@ -22,3 +22,6 @@ MonoBehaviour:
   - sceneName: 03_Stall
     ambient: 14
     music: 17
+  - sceneName: 00_Start
+    ambient: 13
+    music: 19

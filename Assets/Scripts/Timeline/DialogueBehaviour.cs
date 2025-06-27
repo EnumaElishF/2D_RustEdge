@@ -33,8 +33,31 @@ public class DialogueBehaviour : PlayableBehaviour
             }
             else
             {
+                //结束对话
                 EventHandler.CallShowDialogueEvent(null);
             }
         }
+    }
+    // 在Timeline播放期间，每帧执行
+    public override void ProcessFrame(Playable playable, FrameData info, object playerData)
+    {
+        if (Application.isPlaying)
+            TimelineManager.Instance.IsDone = dialoguePiece.isDone;
+    }
+    //在Clip结束后执行
+    public override void OnBehaviourPause(Playable playable, FrameData info)
+    {
+       //结束对话
+        EventHandler.CallShowDialogueEvent(null);
+    }
+    public override void OnGraphStart(Playable playable)
+    {
+        EventHandler.CallUpdateGameStateEvent(GameState.Pause);
+
+    }
+    public override void OnGraphStop(Playable playable)
+    {
+        EventHandler.CallUpdateGameStateEvent(GameState.GamePlay);
+
     }
 }

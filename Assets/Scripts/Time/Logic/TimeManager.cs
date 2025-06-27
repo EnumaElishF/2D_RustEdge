@@ -26,12 +26,21 @@ public class TimeManager : Singleton<TimeManager>
     {
         EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
+        EventHandler.UpdateGameStateEvent += OnUpdateGameStateEvent;
     }
     private void OnDisable()
     {
         EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
+        EventHandler.UpdateGameStateEvent -= OnUpdateGameStateEvent;
 
+
+    }
+
+    private void OnUpdateGameStateEvent(GameState gameState)
+    {
+        //执行是不是要暂停,如果gameState == GameState.Pause那么true，时钟暂停
+        gameClockPause = gameState == GameState.Pause;
     }
 
     private void OnAfterSceneLoadedEvent()

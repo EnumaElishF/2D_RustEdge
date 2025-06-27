@@ -49,3 +49,21 @@ MonoBehaviour:
     - sceneName: 03_Stall
       fromGridCell: {x: 99999, y: 99999}
       gotoGridCell: {x: 24, y: -3}
+  - fromSceneName: 01_Field
+    gotoSceneName: 00_Start
+    scenePathList:
+    - sceneName: 00_Start
+      fromGridCell: {x: -4, y: 4}
+      gotoGridCell: {x: 99999, y: 99999}
+    - sceneName: 01_Field
+      fromGridCell: {x: 99999, y: 99999}
+      gotoGridCell: {x: 5, y: -9}
+  - fromSceneName: 00_Start
+    gotoSceneName: 01_Field
+    scenePathList:
+    - sceneName: 01_Field
+      fromGridCell: {x: 5, y: -9}
+      gotoGridCell: {x: 99999, y: 99999}
+    - sceneName: 00_Start
+      fromGridCell: {x: 99999, y: 99999}
+      gotoGridCell: {x: -4, y: 4}

@@ -227,7 +227,7 @@ Transform:
   m_GameObject: {fileID: 53444906}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.6, y: 1.14, z: 0}
+  m_LocalPosition: {x: -3.72, y: -6.48, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -828,7 +828,7 @@ MonoBehaviour:
   dialogueList:
   - faceImage: {fileID: 21300000, guid: 67d354b9f685e4e1b90255eb84bc5abe, type: 3}
     onLeft: 1
-    name: Maya
+    name: Jack
     dialogueText: "\u6B22\u8FCE\u5149\u4E34,\u770B\u770B\u6709\u4EC0\u4E48\u9700\u8981\u7684\u5417\uFF1F"
     hasToPause: 1
     isDone: 0
@@ -2220,7 +2220,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5999995, y: 1.1400002, z: -10}
+  m_LocalPosition: {x: -3.7200005, y: -6.4799995, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3287,7 +3287,7 @@ Transform:
   m_GameObject: {fileID: 944730952}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.47, y: -5.49, z: 0}
+  m_LocalPosition: {x: -3.51, y: -5.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3314,7 +3314,7 @@ MonoBehaviour:
   - faceImage: {fileID: 21300000, guid: bcb4accdbcb044b98bc839a4ab34d0f6, type: 3}
     onLeft: 1
     name: Alice
-    dialogueText: "\u554A\u5566\uFF0C\u4E0D\u592A\u5E38\u89C1\u7684\u5BA2\u4EBA\u54CE\uFF0C\u5728\u6D77\u4E0A\u78B0\u5230\u4EC0\u4E48\u60C5\u51B5\u5566"
+    dialogueText: "\u554A\u5566\uFF0C\u4E0D\u592A\u5E38\u89C1\u7684\u5BA2\u4EBA\u54CE\uFF0C\u5E0C\u671B\u4F60\u80FD\u9002\u5E94\u8FD9\u91CC\u7684\u751F\u6D3B"
     hasToPause: 1
     isDone: 0
 --- !u!114 &944730955
@@ -3768,7 +3768,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 9d9e72548ae3d7f4e89434d7c4710402, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -3779,6 +3779,12 @@ PlayableDirector:
     value: {fileID: 0}
   - key: {fileID: 7613146439141091436, guid: 9d9e72548ae3d7f4e89434d7c4710402, type: 2}
     value: {fileID: 1614433860}
+  - key: {fileID: -3425738868416241063, guid: 9d9e72548ae3d7f4e89434d7c4710402, type: 2}
+    value: {fileID: 832799979}
+  - key: {fileID: -4992505340723620868, guid: 9d9e72548ae3d7f4e89434d7c4710402, type: 2}
+    value: {fileID: 1816427354}
+  - key: {fileID: -6881530547385239687, guid: 9d9e72548ae3d7f4e89434d7c4710402, type: 2}
+    value: {fileID: 1385260048}
   m_ExposedReferences:
     m_References:
     - 5470a6678a8cc1d429e90aeed4f33728: {fileID: 1099896070}
@@ -3826,7 +3832,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f0465c5ad8e97d42ace14af40cd04ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startDirector: {fileID: 0}
+  startDirector: {fileID: 1103097519}
 --- !u!4 &1133451331
 Transform:
   m_ObjectHideFlags: 0
@@ -5913,7 +5919,7 @@ Transform:
   m_GameObject: {fileID: 1971907230}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5999995, y: 1.1400002, z: -10}
+  m_LocalPosition: {x: -3.7200005, y: -6.4799995, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

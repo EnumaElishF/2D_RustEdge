@@ -1,9 +1,10 @@
+using Farm.Save;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeManager : Singleton<TimeManager>
+public class TimeManager : Singleton<TimeManager>,ISaveable
 {
     private int gameSecond, gameMinute, gameHour, gameDay, gameMonth, gameYear;
 
@@ -16,6 +17,8 @@ public class TimeManager : Singleton<TimeManager>
     private float timeDifference;
 
     public TimeSpan GameTime => new TimeSpan(gameHour, gameMinute, gameSecond);
+
+    public string GUID => GetComponent<DataGUID>().guid;
 
     protected override void Awake()
     {
@@ -46,6 +49,11 @@ public class TimeManager : Singleton<TimeManager>
     private void OnAfterSceneLoadedEvent()
     {
         gameClockPause = false; //场景加载之后，重新开启时间
+
+        EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
+        EventHandler.CallGameMinuteEvent(gameMinute, gameHour, gameDay, gameSeason);
+        //切换灯光
+        EventHandler.CallLightShiftChangeEvent(gameSeason, GetCurrentLightShift(), timeDifference);
 
     }
 
@@ -175,5 +183,42 @@ public class TimeManager : Singleton<TimeManager>
             return LightShift.Night;
         }
         return LightShift.Morning;
+    }
+
+    /// <summary>
+    /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
+    /// </summary>
+    /// <returns></returns>
+    public GameSaveData GenerateSaveData()
+    {
+        //把TimeManager中数据，逐一添加到整型的字典中
+        GameSaveData saveData = new GameSaveData();
+        saveData.timeDict = new Dictionary<string, int>();
+        saveData.timeDict.Add("gameYear", gameYear);
+        saveData.timeDict.Add("gameSeason", (int)gameSeason);
+        saveData.timeDict.Add("gameMonth", gameMonth);
+        saveData.timeDict.Add("gameDay", gameDay);
+        saveData.timeDict.Add("gameHour", gameHour);
+        saveData.timeDict.Add("gameMinute", gameMinute);
+        saveData.timeDict.Add("gameSecond", gameSecond);
+
+        return saveData;
+    }
+    /// <summary>
+    /// 生成恢复数据：实现自ISaveable接口的 RestoreData
+    /// </summary>
+    /// <param name="saveData"></param>
+    public void RestoreData(GameSaveData saveData)
+    {
+        //怎么存进去的，就怎么拿出来
+        gameYear = saveData.timeDict["gameYear"];
+        gameSeason = (Season)saveData.timeDict["gameSeason"];
+        gameMonth = saveData.timeDict["gameMonth"];
+        gameDay = saveData.timeDict["gameDay"];
+        gameHour = saveData.timeDict["gameHour"];
+        gameMinute = saveData.timeDict["gameMinute"];
+        gameSecond = saveData.timeDict["gameSecond"];
+
+        //看OnAfterSceneLoadedEvent在我们数据做完后，进行了调用时间，灯光的更新变化(刷新)
     }
 }

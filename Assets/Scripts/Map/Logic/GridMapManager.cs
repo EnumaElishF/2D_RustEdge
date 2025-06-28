@@ -1,4 +1,5 @@
 using Farm.CropPlant;
+using Farm.Save;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -10,7 +11,7 @@ using UnityEngine.Tilemaps;
 namespace Farm.Map
 {
     //写成Singleton单例模式
-    public class GridMapManager : Singleton<GridMapManager>
+    public class GridMapManager : Singleton<GridMapManager>,ISaveable
     {
         [Header("种地瓦片切换信息")]
         public RuleTile digTile;
@@ -36,6 +37,9 @@ namespace Farm.Map
         private List<ReapItem> itemsInRadius;
 
         private Grid currentGrid;
+
+        public string GUID => GetComponent<DataGUID>().guid;
+
         private void OnEnable()
         {
             EventHandler.ExecuteActionAfterAnimation += OnExecuteActionAfterAnimation;
@@ -441,6 +445,29 @@ namespace Farm.Map
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
+        /// </summary>
+        /// <returns></returns>
+        public GameSaveData GenerateSaveData()
+        {
+            GameSaveData saveData = new GameSaveData();
+            //Grid就直接存一下两个字典数据就行
+            saveData.tileDetailsDict = this.tileDetailsDict;
+            saveData.firstLoadDict = this.firstLoadDict;
+
+            return saveData;
+        }
+        /// <summary>
+        /// 生成恢复数据：实现自ISaveable接口的 RestoreData
+        /// </summary>
+        /// <param name="saveData"></param>
+        public void RestoreData(GameSaveData saveData)
+        {
+            this.tileDetailsDict = saveData.tileDetailsDict;
+            this.firstLoadDict = saveData.firstLoadDict;
         }
     }
 }

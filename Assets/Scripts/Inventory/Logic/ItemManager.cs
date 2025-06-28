@@ -1,4 +1,5 @@
 using Farm.Inventory;
+using Farm.Save;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,15 @@ using UnityEngine.SceneManagement;
 
 namespace Farm.Inventory
 {
-    public class ItemManager : MonoBehaviour
+    public class ItemManager : MonoBehaviour,ISaveable
     {
         public Item itemPrefab;
         public Item bounceItemPrefab;
         private Transform itemParent;
 
         private Transform PlayerTransform => FindAnyObjectByType<Player>().transform;
+
+        public string GUID => GetComponent<DataGUID>().guid;
 
         //记录场景Item (场景物品存储_字典类型)
         private Dictionary<string, List<SceneItem>> sceneItemDict = new Dictionary<string, List<SceneItem>>();
@@ -212,6 +215,36 @@ namespace Farm.Inventory
                 }
             }
         }
+
+        /// <summary>
+        /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
+        /// </summary>
+        /// <returns></returns>
+        public GameSaveData GenerateSaveData()
+        {
+            //赋值字典，首先要获取场景中的所有物品，所有家具
+            GetAllSceneItems();
+            GetAllSceneFurniture();
+
+            GameSaveData saveData = new GameSaveData();
+            saveData.sceneItemDict = this.sceneItemDict;
+            saveData.sceneFurnitureDict = this.sceneFurnitureDict;
+
+            return saveData;
+        }
+        /// <summary>
+        /// 生成恢复数据：实现自ISaveable接口的 RestoreData
+        /// </summary>
+        /// <param name="saveData"></param>
+        public void RestoreData(GameSaveData saveData)
+        {
+            this.sceneItemDict = saveData.sceneItemDict;
+            this.sceneFurnitureDict = saveData.sceneFurnitureDict;
+            //读取到数据后，要记得刷新场景
+            RecreateAllItems();
+            RebuildFurniture();
+        }
+
     }
 }
 

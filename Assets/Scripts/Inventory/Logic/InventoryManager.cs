@@ -1,3 +1,4 @@
+using Farm.Save;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,7 +9,7 @@ using static UnityEditor.Progress;
 //继承Singleton实现单例
 namespace Farm.Inventory
 {
-    public class InventoryManager : Singleton<InventoryManager>
+    public class InventoryManager : Singleton<InventoryManager>,ISaveable
     {
         [Header("物品数据")]
         public ItemDataList_SO itemDataList_SO;
@@ -22,6 +23,9 @@ namespace Farm.Inventory
 
         private Dictionary<string, List<InventoryItem>> boxDataDict = new Dictionary<string, List<InventoryItem>>();
         public int BoxDataAmount => boxDataDict.Count;
+
+        public string GUID => GetComponent<DataGUID>().guid;
+
 
         private void OnEnable()
         {
@@ -47,8 +51,14 @@ namespace Farm.Inventory
 
         private void Start()
         {
+            //ISaveable进行注册
+            ISaveable saveable = this;
+            saveable.RegisterSaveable();
+
             //游戏开始时，更新一次ui
             EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
+
+
         }
         /// <summary>
         /// OnBuildFurnitureEvent：建造事件的移除物品
@@ -361,6 +371,42 @@ namespace Farm.Inventory
             Debug.Log(key);
         }
 
+        /// <summary>
+        /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
+        /// </summary>
+        /// <returns></returns>
+        public GameSaveData GenerateSaveData()
+        {
+            GameSaveData saveData = new GameSaveData();
+            saveData.playerMoney = this.playerMoney; //钱
+            saveData.inventoryDict.Add(playerBag.name, playerBag.itemList); //背包
+            foreach(var item in boxDataDict) //箱子
+            {
+                saveData.inventoryDict.Add(item.Key, item.Value);
+            }
+
+            return saveData;
+        }
+        /// <summary>
+        /// 生成恢复数据：实现自ISaveable接口的 RestoreData
+        /// </summary>
+        /// <param name="saveData"></param>
+        public void RestoreData(GameSaveData saveData)
+        {
+            this.playerMoney = saveData.playerMoney; //钱
+            playerBag.itemList = saveData.inventoryDict[playerBag.name]; //背包
+            
+            foreach(var item in saveData.inventoryDict)//箱子
+            {
+                if (boxDataDict.ContainsKey(item.Key))
+                {
+                    boxDataDict[item.Key] = item.Value;
+                }
+            }
+            //重新生成图标的时候，要刷新他的ui，才能正常显示 :
+            //这里只刷新了Player的背包ui，箱子的数据ActionBar在每次打开箱子就写好了刷新
+            EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
+        }
     }
 }
 

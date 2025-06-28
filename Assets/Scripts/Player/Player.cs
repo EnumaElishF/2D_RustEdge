@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Player : MonoBehaviour
+using Farm.Save;
+public class Player : MonoBehaviour,ISaveable
 {
     private Rigidbody2D rb;
     public float speed;
@@ -20,10 +20,18 @@ public class Player : MonoBehaviour
 
     private bool useTool;
 
+    public string GUID => GetComponent<DataGUID>().guid;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animators = GetComponentsInChildren<Animator>();
+    }
+    private void Start()
+    {
+        //ISaveable进行注册
+        ISaveable saveable = this;
+        saveable.RegisterSaveable();
     }
     /// <summary>
     /// 组件启用时注册事件监听
@@ -204,5 +212,26 @@ public class Player : MonoBehaviour
                 anim.SetFloat("InputY", inputY);
             }
         }
+    }
+    /// <summary>
+    /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
+    /// </summary>
+    /// <returns></returns>
+    public GameSaveData GenerateSaveData()
+    {
+        GameSaveData saveData = new GameSaveData();
+        saveData.characterPosDict = new Dictionary<string, SerializableVector3>();
+        saveData.characterPosDict.Add(this.name,new SerializableVector3(transform.position)); //Player坐标
+
+        return saveData;
+    }
+    /// <summary>
+    /// 生成恢复数据：实现自ISaveable接口的 RestoreData
+    /// </summary>
+    /// <param name="saveData"></param>
+    public void RestoreData(GameSaveData saveData)
+    {
+        var targetPosition = saveData.characterPosDict[this.name].ToVector3();//Player坐标
+        transform.position = targetPosition; 
     }
 }

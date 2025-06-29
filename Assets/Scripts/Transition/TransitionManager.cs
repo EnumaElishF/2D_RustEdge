@@ -1,3 +1,4 @@
+using Farm.Save;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,13 +6,20 @@ using UnityEngine.SceneManagement;
 
 namespace Farm.Transition
 {
-    public class TransitionManager : MonoBehaviour
+    public class TransitionManager : MonoBehaviour,ISaveable
     {
        [SceneName]
         public string startSceneName = string.Empty;
 
         private CanvasGroup fadeCanvasGroup;
         private bool isFade;
+
+        public string GUID => GetComponent<DataGUID>().guid;
+        private void Awake()
+        {
+            // UI以Additive加到场景上，此时不是被激活的
+            SceneManager.LoadScene("UI", LoadSceneMode.Additive);
+        }
 
         private void OnEnable()
         {
@@ -22,9 +30,13 @@ namespace Farm.Transition
             EventHandler.TransitionEvent -= OnTransitionEvent;
         }
 
-
+        //TODO 转换成开始新游戏
         private IEnumerator Start()
         {
+            //ISaveable进行注册
+            ISaveable saveable = this;
+            saveable.RegisterSaveable();
+
             //TODO 方法临时，因为代码更新的原因
             fadeCanvasGroup = FindFirstObjectByType<CanvasGroup>();
             yield return StartCoroutine(LoadSceneSetActive(startSceneName));
@@ -100,6 +112,50 @@ namespace Farm.Transition
             fadeCanvasGroup.blocksRaycasts = false;
             isFade = false; 
         }
+        /// <summary>
+        /// 加载存储游戏场景
+        /// </summary>
+        /// <param name="sceneName"></param>
+        /// <returns></returns>
+        public IEnumerator LoadSaveDataScene(string sceneName)
+        {
+            // ！！！加载存储，游戏的存档，的时候，渐入（让我们的游戏在使用I和O变化存档，变的更真实）
+            yield return Fade(1f); //1黑
 
+            if (SceneManager.GetActiveScene().name != "PersistentScene") //在游戏过程中，加载另外游戏进度
+            {
+                //当前场景不是PersistentScene，那么就代表是01或者其他等场景，我们要切换场景，就先卸载他
+                EventHandler.CallBeforeSceneUnloadEvent();
+                //卸载当前场景
+                yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+            }
+            //激活新场景
+            yield return LoadSceneSetActive(sceneName);
+
+            EventHandler.CallAfterSceneLoadedEvent();
+            yield return Fade(0);
+
+        }
+        /// <summary>
+        /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
+        /// </summary>
+        /// <returns></returns>
+        public GameSaveData GenerateSaveData()
+        {
+            GameSaveData saveData = new GameSaveData();
+            saveData.dataSceneName = SceneManager.GetActiveScene().name;
+
+            return saveData;
+
+        }
+        /// <summary>
+        /// 生成恢复数据：实现自ISaveable接口的 RestoreData
+        /// </summary>
+        /// <param name="saveData"></param>
+        public void RestoreData(GameSaveData saveData)
+        {
+            //加载游戏进度场景
+            StartCoroutine(LoadSaveDataScene(saveData.dataSceneName));
+        }
     }
 }

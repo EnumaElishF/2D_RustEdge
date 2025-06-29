@@ -379,6 +379,8 @@ namespace Farm.Inventory
         {
             GameSaveData saveData = new GameSaveData();
             saveData.playerMoney = this.playerMoney; //钱
+
+            saveData.inventoryDict = new Dictionary<string, List<InventoryItem>>();
             saveData.inventoryDict.Add(playerBag.name, playerBag.itemList); //背包
             foreach(var item in boxDataDict) //箱子
             {
@@ -394,6 +396,7 @@ namespace Farm.Inventory
         public void RestoreData(GameSaveData saveData)
         {
             this.playerMoney = saveData.playerMoney; //钱
+
             playerBag.itemList = saveData.inventoryDict[playerBag.name]; //背包
             
             foreach(var item in saveData.inventoryDict)//箱子

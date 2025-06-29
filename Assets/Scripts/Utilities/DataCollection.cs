@@ -58,7 +58,7 @@ public class SerializableVector3
         return new Vector3(x, y, z);
     }
     //因为是2D瓦片地图的，所以要使用整型的V2
-    public Vector2Int ToVectorInt()
+    public Vector2Int ToVector2Int()
     {
         return new Vector2Int((int)x, (int)y);
     }

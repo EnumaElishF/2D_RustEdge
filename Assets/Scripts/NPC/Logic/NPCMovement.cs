@@ -1,4 +1,5 @@
 using Farm.AStar;
+using Farm.Save;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using UnityEngine.SceneManagement;
 //RequireComponent强制绑定,将 NPCMovement 脚本添加到一个游戏对象时，Unity 会自动添加 Rigidbody2D 和 Animator 组件
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
-public class NPCMovement : MonoBehaviour
+public class NPCMovement : MonoBehaviour,ISaveable
 {
     public ScheduleDataList_SO scheduleData;
     private SortedSet<ScheduleDetails> scheduleSet;
@@ -56,6 +57,8 @@ public class NPCMovement : MonoBehaviour
 
     private TimeSpan GameTime => TimeManager.Instance.GameTime;
 
+    public string GUID => GetComponent<DataGUID>().guid;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -96,7 +99,12 @@ public class NPCMovement : MonoBehaviour
 
 
     }
-
+    private void Start()
+    {
+        //ISaveable进行注册
+        ISaveable saveable = this;
+        saveable.RegisterSaveable();
+    }
 
 
     private void Update()
@@ -418,5 +426,55 @@ public class NPCMovement : MonoBehaviour
         // TODO: 影子关闭
         transform.GetChild(0).gameObject.SetActive(false);
     }
-    #endregion 
+
+    /// <summary>
+    /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
+    /// </summary>
+    /// <returns></returns>
+    public GameSaveData GenerateSaveData()
+    {
+        //要保存NPC当前的坐标，以及他的目标的坐标；NPC当前所在的场景，以及目标场景；停下来播放的动画Clip；以及是否可以互动
+        //把上面这些都添加进去
+        GameSaveData saveData = new GameSaveData();
+        //NPC坐标，且不用担心跟其他NPC冲突，因为每一个NPC都会用自己独立的的GUID
+        saveData.characterPosDict = new Dictionary<string, SerializableVector3>();
+        saveData.characterPosDict.Add("targetGridPosition", new SerializableVector3(targetGridPosition));
+        saveData.characterPosDict.Add("currentGridPosition", new SerializableVector3(currentGridPosition));
+        saveData.dataSceneName = currentScene;
+        saveData.targetScene = this.targetScene;
+        if (stopAnimationClip != null)
+        {
+            saveData.animationInstanceID = stopAnimationClip.GetInstanceID();
+        }
+        saveData.interactable = this.interactable;
+
+        return saveData;
+    }
+    /// <summary>
+    /// 生成恢复数据：实现自ISaveable接口的 RestoreData
+    /// </summary>
+    /// <param name="saveData"></param>
+    public void RestoreData(GameSaveData saveData)
+    {
+        isInitialised = true; //已初始化标志
+
+        //坐标
+        currentScene = saveData.dataSceneName;
+        targetScene = saveData.targetScene;
+        Vector3 pos = saveData.characterPosDict["currentGridPosition"].ToVector3();
+        Vector3Int gridPos = (Vector3Int)saveData.characterPosDict["targetGridPosition"].ToVector2Int();
+        transform.position = pos;
+        targetGridPosition = gridPos;
+        //动画Clip
+        if (saveData.animationInstanceID != 0)
+        {
+            this.stopAnimationClip = Resources.InstanceIDToObject(saveData.animationInstanceID) as AnimationClip;
+        }
+        //是否可互动
+        this.interactable = saveData.interactable;
+    }
+
+
+
+    #endregion
 }

@@ -40,30 +40,14 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
 
     }
 
-    private void OnUpdateGameStateEvent(GameState gameState)
-    {
-        //执行是不是要暂停,如果gameState == GameState.Pause那么true，时钟暂停
-        gameClockPause = gameState == GameState.Pause;
-    }
 
-    private void OnAfterSceneLoadedEvent()
-    {
-        gameClockPause = false; //场景加载之后，重新开启时间
-
-        EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
-        EventHandler.CallGameMinuteEvent(gameMinute, gameHour, gameDay, gameSeason);
-        //切换灯光
-        EventHandler.CallLightShiftChangeEvent(gameSeason, GetCurrentLightShift(), timeDifference);
-
-    }
-
-    private void OnBeforeSceneUnloadEvent()
-    {
-        gameClockPause = true; //场景在卸载之前，先暂停时间
-    }
 
     private void Start()
     {
+        //ISaveable进行注册
+        ISaveable saveable = this;
+        saveable.RegisterSaveable();
+
         //为了能更新日期，需要在Awake和OnEnable执行
         //Awake——>OnEnable–>Start——>(FixedUpdate——>Update——>LateUpdate)——>OnGUI——>OnDisable——>OnDestroy
         //Event C# 中实现发布 - 订阅模式的语言特性 ,类似订阅+监听的模式
@@ -101,6 +85,28 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
             EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
         }
     }
+    private void OnUpdateGameStateEvent(GameState gameState)
+    {
+        //执行是不是要暂停,如果gameState == GameState.Pause那么true，时钟暂停
+        gameClockPause = gameState == GameState.Pause;
+    }
+
+    private void OnAfterSceneLoadedEvent()
+    {
+        gameClockPause = false; //场景加载之后，重新开启时间
+
+        EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
+        EventHandler.CallGameMinuteEvent(gameMinute, gameHour, gameDay, gameSeason);
+        //切换灯光
+        EventHandler.CallLightShiftChangeEvent(gameSeason, GetCurrentLightShift(), timeDifference);
+
+    }
+
+    private void OnBeforeSceneUnloadEvent()
+    {
+        gameClockPause = true; //场景在卸载之前，先暂停时间
+    }
+
     private void NewGameTime()
     {
         gameSecond = 0;
@@ -179,7 +185,7 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
         if(GameTime<Settings.morningTime || GameTime>= Settings.nightTime)
         {
             timeDifference = Mathf.Abs((float)(GameTime - Settings.nightTime).TotalMinutes);
-            Debug.Log(timeDifference);
+            //Debug.Log(timeDifference);
             return LightShift.Night;
         }
         return LightShift.Morning;

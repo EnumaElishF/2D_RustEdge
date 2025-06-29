@@ -27,7 +27,8 @@ public class ItemInteractive : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (!isAnimating)
+        //断点解决加入gameObject.activeInHierarchy，让草在激活的状态下，再去运行
+        if (!isAnimating && gameObject.activeInHierarchy)
         {
             if (other.transform.position.x > transform.position.x)
             {

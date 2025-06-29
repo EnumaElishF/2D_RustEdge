@@ -43,6 +43,12 @@ namespace Farm.Inventory
             EventHandler.BuildFurnitureEvent -= OnBuildFurnitureEvent;
 
         }
+        private void Start()
+        {
+            //ISaveable进行注册
+            ISaveable saveable = this;
+            saveable.RegisterSaveable();
+        }
         /// <summary>
         /// OnBuildFurnitureEvent: 建造事件的 在场景上进行物品生成
         /// </summary>

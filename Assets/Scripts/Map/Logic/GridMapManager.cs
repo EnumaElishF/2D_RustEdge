@@ -62,6 +62,11 @@ namespace Farm.Map
 
         private void Start()
         {
+            //ISaveable½øÐÐ×¢²á
+            ISaveable saveable = this;
+            saveable.RegisterSaveable();
+
+            //
             foreach (var mapData in mapDataList)
             {
                 firstLoadDict.Add(mapData.sceneName, true);

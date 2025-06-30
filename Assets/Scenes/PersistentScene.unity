@@ -2949,6 +2949,9 @@ MonoBehaviour:
   - npc: {fileID: 83130104}
     startScene: 03_Stall
     position: {x: 4.75, y: -0.14, z: 0}
+  - npc: {fileID: 944730953}
+    startScene: 00_Start
+    position: {x: -3.51, y: -5.07, z: 0}
 --- !u!1 &797673913
 GameObject:
   m_ObjectHideFlags: 0
@@ -3032,7 +3035,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d969e1e5ee8744458c5ce0fcfa55524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startSceneName: 01_Field
+  startSceneName: 00_Start
 --- !u!114 &814018349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3045,7 +3048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e1cbb3ff0a539d4aad062b447713414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 
+  guid: 8081d901-fb90-4b02-9d77-936a220306d6
 --- !u!1 &832799976
 GameObject:
   m_ObjectHideFlags: 0
@@ -5552,7 +5555,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDataList_SO: {fileID: 11400000, guid: e9ed6fac2860d5c449bafefde4bef563, type: 2}
   bluePrintData: {fileID: 11400000, guid: a15ed434d522cc74d855e56d9184d090, type: 2}
-  playerBag: {fileID: 11400000, guid: 3fa8540571e2d0b4897d7eb6a80082fc, type: 2}
+  playerBagTemp: {fileID: 11400000, guid: 3fa8540571e2d0b4897d7eb6a80082fc, type: 2}
+  playerBag: {fileID: 0}
   playerMoney: 300
 --- !u!4 &1786642487
 Transform:

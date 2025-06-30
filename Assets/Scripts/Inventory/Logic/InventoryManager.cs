@@ -16,6 +16,7 @@ namespace Farm.Inventory
         [Header("建造蓝图")]
         public BluePrintDataList_SO bluePrintData;
         [Header("背包数据")]
+        public InventoryBag_SO playerBagTemp; //确保新游戏在加载的时候可以拿到全新的背包的数据
         public InventoryBag_SO playerBag;
         private InventoryBag_SO currentBoxBag; //当前箱子打开的数据
         [Header("交易")]
@@ -34,6 +35,9 @@ namespace Farm.Inventory
             //建造
             EventHandler.BuildFurnitureEvent += OnBuildFurnitureEvent;
             EventHandler.BaseBagOpenEvent += OnBaseBagOpenEvent;
+
+            EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+
         }
         private void OnDisable()
         {
@@ -42,6 +46,28 @@ namespace Farm.Inventory
             EventHandler.BuildFurnitureEvent -= OnBuildFurnitureEvent;
             EventHandler.BaseBagOpenEvent -= OnBaseBagOpenEvent;
 
+            EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+
+        }
+        private void Start()
+        {
+            //ISaveable进行注册
+            ISaveable saveable = this;
+            saveable.RegisterSaveable();
+
+            //EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
+
+
+        }
+        //需要在新游戏开始时重置的数据
+        private void OnStartNewGameEvent(int obj)
+        {
+            playerBag = Instantiate(playerBagTemp);
+            playerMoney = Settings.playerStartMoney;
+            boxDataDict.Clear();
+
+            //游戏开始时，更新一次ui
+            EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
         }
 
         private void OnBaseBagOpenEvent(SlotType slotType, InventoryBag_SO bag_SO)
@@ -49,17 +75,7 @@ namespace Farm.Inventory
             currentBoxBag = bag_SO;
         }
 
-        private void Start()
-        {
-            //ISaveable进行注册
-            ISaveable saveable = this;
-            saveable.RegisterSaveable();
 
-            //游戏开始时，更新一次ui
-            EventHandler.CallUpdateInventoryUI(InventoryLocation.Player, playerBag.itemList);
-
-
-        }
         /// <summary>
         /// OnBuildFurnitureEvent：建造事件的移除物品
         /// </summary>

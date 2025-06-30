@@ -48,4 +48,10 @@ public class Settings
     public const float lightChangeDuration = 25f;
     public static TimeSpan morningTime = new TimeSpan(5, 0, 0);
     public static TimeSpan nightTime = new TimeSpan(19, 0, 0);
+
+    //主角开始游戏时的坐标
+    public static Vector3 playerStartPos = new Vector3(-3.7f, -6.4f, 0);
+
+    //开始游戏时的金钱
+    public const int playerStartMoney = 100;
 }

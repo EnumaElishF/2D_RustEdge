@@ -43,6 +43,8 @@ public class Player : MonoBehaviour,ISaveable
         EventHandler.MoveToPosition += OnMoveToPosition;
         EventHandler.MouseClickedEvent += OnMouseClickedEvent;
         EventHandler.UpdateGameStateEvent += OnUpdateGameStateEvent;
+
+        EventHandler.StartNewGameEvent += OnStartNewGameEvent;
     }
 
 
@@ -56,6 +58,9 @@ public class Player : MonoBehaviour,ISaveable
         EventHandler.MoveToPosition -= OnMoveToPosition;
         EventHandler.MouseClickedEvent -= OnMouseClickedEvent;
         EventHandler.UpdateGameStateEvent -= OnUpdateGameStateEvent;
+
+        EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+
 
     }
 
@@ -77,6 +82,13 @@ public class Player : MonoBehaviour,ISaveable
     {
         if (!inputDisable)
             Movement();
+    }
+
+    private void OnStartNewGameEvent(int obj)
+    {
+        inputDisable = false; //设置成游戏一开始就可以控制人物了
+        transform.position = Settings.playerStartPos;
+
     }
 
     private void OnUpdateGameStateEvent(GameState gameState)

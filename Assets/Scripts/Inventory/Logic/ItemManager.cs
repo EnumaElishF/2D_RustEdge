@@ -32,6 +32,9 @@ namespace Farm.Inventory
             EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadEvent;
             //建造
             EventHandler.BuildFurnitureEvent += OnBuildFurnitureEvent;
+
+            EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+
         }
 
         private void OnDisable()
@@ -42,13 +45,26 @@ namespace Farm.Inventory
             EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadEvent;
             EventHandler.BuildFurnitureEvent -= OnBuildFurnitureEvent;
 
+            EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+
+
         }
+
         private void Start()
         {
             //ISaveable进行注册
             ISaveable saveable = this;
             saveable.RegisterSaveable();
         }
+
+        //需要在新游戏开始时重置的数据
+        private void OnStartNewGameEvent(int obj)
+        {
+            //清空
+            sceneItemDict.Clear();
+            sceneFurnitureDict.Clear();
+        }
+
         /// <summary>
         /// OnBuildFurnitureEvent: 建造事件的 在场景上进行物品生成
         /// </summary>

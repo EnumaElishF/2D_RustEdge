@@ -17,7 +17,7 @@ public class NPCMovement : MonoBehaviour,ISaveable
 
 
     //¡Ÿ ±¥Ê¥¢–≈œ¢
-    [SerializeField]private string currentScene;
+    [SerializeField]public string currentScene;
     private string targetScene;
     private Vector3Int currentGridPosition;
     private Vector3Int targetGridPosition;

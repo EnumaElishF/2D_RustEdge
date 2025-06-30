@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace Farm.Transition
 {
-    public class TransitionManager : MonoBehaviour,ISaveable
+    public class TransitionManager : Singleton<TransitionManager>,ISaveable
     {
        [SceneName]
         public string startSceneName = string.Empty;
@@ -15,8 +15,9 @@ namespace Farm.Transition
         private bool isFade;
 
         public string GUID => GetComponent<DataGUID>().guid;
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             // UI以Additive加到场景上，此时不是被激活的
             SceneManager.LoadScene("UI", LoadSceneMode.Additive);
         }
@@ -24,25 +25,30 @@ namespace Farm.Transition
         private void OnEnable()
         {
             EventHandler.TransitionEvent += OnTransitionEvent;
+
+            EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+
         }
         private void OnDisable()
         {
             EventHandler.TransitionEvent -= OnTransitionEvent;
+
+            EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+
         }
 
-        //TODO 转换成开始新游戏
-        private IEnumerator Start()
+        private void OnStartNewGameEvent(int obj)
+        {
+            StartCoroutine(LoadSaveDataScene(startSceneName));
+        }
+
+        private void Start()
         {
             //ISaveable进行注册
             ISaveable saveable = this;
             saveable.RegisterSaveable();
 
-            //TODO 方法临时，因为代码更新的原因
             fadeCanvasGroup = FindFirstObjectByType<CanvasGroup>();
-            yield return StartCoroutine(LoadSceneSetActive(startSceneName));
-            //需要在游戏开始时就以协程的方式，执行CallAfterSceneLoadedEvent。因为在CursorManager需要使用场景加载后才能得到的方法
-            EventHandler.CallAfterSceneLoadedEvent();
-
         }
 
 

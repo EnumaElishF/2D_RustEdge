@@ -20,16 +20,15 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
 
     public string GUID => GetComponent<DataGUID>().guid;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        NewGameTime();
-    }
+
     private void OnEnable()
     {
         EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
         EventHandler.UpdateGameStateEvent += OnUpdateGameStateEvent;
+
+        EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+
     }
     private void OnDisable()
     {
@@ -37,6 +36,7 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
         EventHandler.UpdateGameStateEvent -= OnUpdateGameStateEvent;
 
+        EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
 
     }
 
@@ -48,14 +48,17 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
         ISaveable saveable = this;
         saveable.RegisterSaveable();
 
+        gameClockPause = true;
+
         //为了能更新日期，需要在Awake和OnEnable执行
         //Awake——>OnEnable–>Start——>(FixedUpdate——>Update——>LateUpdate)——>OnGUI——>OnDisable——>OnDestroy
         //Event C# 中实现发布 - 订阅模式的语言特性 ,类似订阅+监听的模式
-        EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
-        EventHandler.CallGameMinuteEvent(gameMinute, gameHour,gameDay,gameSeason);
 
-        //切换灯光
-        EventHandler.CallLightShiftChangeEvent(gameSeason, GetCurrentLightShift(), timeDifference);
+        //EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
+        //EventHandler.CallGameMinuteEvent(gameMinute, gameHour,gameDay,gameSeason);
+
+        ////切换灯光
+        //EventHandler.CallLightShiftChangeEvent(gameSeason, GetCurrentLightShift(), timeDifference);
     }
     private void Update()
     {
@@ -85,6 +88,17 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
             EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
         }
     }
+
+    //需要在新游戏开始时重置的数据
+    private void OnStartNewGameEvent(int obj)
+    {
+        //游戏时间重置
+        NewGameTime();
+
+        gameClockPause = false;
+
+    }
+
     private void OnUpdateGameStateEvent(GameState gameState)
     {
         //执行是不是要暂停,如果gameState == GameState.Pause那么true，时钟暂停

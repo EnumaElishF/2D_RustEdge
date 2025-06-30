@@ -15,6 +15,27 @@ public class NPCManager : Singleton<NPCManager>
         base.Awake();
         InitSceneRouteDict();
     }
+    private void OnEnable()
+    {
+        EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+
+    }
+    private void OnDisable()
+    {
+        EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+
+    }
+    //需要在新游戏开始时重置的数据
+    private void OnStartNewGameEvent(int obj)
+    {
+        foreach(var character in npcPositionList)
+        {
+            //每次新游戏的时候，每一个NPC都去到他开始的位置，以及开始的场景
+            character.npc.position = character.position;
+            character.npc.GetComponent<NPCMovement>().currentScene = character.startScene;
+        }
+    }
+
     private void InitSceneRouteDict()
     {
         if(sceneRouteDate.sceneRouteList.Count > 0)

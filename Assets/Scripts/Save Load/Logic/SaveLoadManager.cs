@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using System;
 namespace Farm.Save
 {
     public class SaveLoadManager : Singleton<SaveLoadManager>
@@ -18,9 +19,24 @@ namespace Farm.Save
         protected override void Awake()
         {
             base.Awake();
-            //在Application.persistentDataPath的使用！，在其路径下，创建名叫/SAVE DATA/的文件夹
+            //在Application.persistentDataPath的使用！，在其路径下，创建名叫/SAVE DATA/的文件夹 (Settings设置Player公司名称等)
+            //C:\Users\{userName}\AppData\LocalLow\FarmCompany\RustEdge\SAVE DATA 
             jsonFolder = Application.persistentDataPath + "/SAVE DATA/";
+
+            ReadSaveData();
         }
+
+        private void OnEnable()
+        {
+            EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+        }
+        private void OnDisable()
+        {
+            EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+
+        }
+
+
         private void Update()
         {
             //按键I保存当前档，按键O读取档，进行测试，保存和读档是否可用
@@ -30,12 +46,39 @@ namespace Farm.Save
                 Load(currentDataIndex);
 
         }
+
+
+        private void OnStartNewGameEvent(int index)
+        {
+            currentDataIndex = index;
+        }
+
         public void RegisterSaveable(ISaveable saveable)
         {
             //如果这个场景中不包含该saveable，那就添加上去
             if (!saveableList.Contains(saveable))
             {
                 saveableList.Add(saveable);
+            }
+        }
+        /// <summary>
+        /// 读游戏进度
+        /// </summary>
+        private void ReadSaveData()
+        {
+            if (Directory.Exists(jsonFolder))
+            {
+                for(int i = 0; i < dataSlots.Count; i++) //循环3个slot
+                {
+                    var resultPath = jsonFolder + "data" + i + ".json";
+                    //把游戏的进度都找出来，然后对应的给他赋值到 dataSlots 里
+                    if (File.Exists(resultPath))
+                    {
+                        var stringData = File.ReadAllText(resultPath);
+                        var jsonData = JsonConvert.DeserializeObject<DataSlot>(stringData);
+                        dataSlots[i] = jsonData;
+                    }
+                }
             }
         }
         /// <summary>
@@ -61,6 +104,9 @@ namespace Farm.Save
             {
                 Directory.CreateDirectory(jsonFolder);
             }
+
+            Debug.Log("DATA" + index + "SAVED!");
+
             //这里的内容就都是Text文本的String数据，拿到的就是jsonData
             File.WriteAllText(resultPath,jsonData);
         }

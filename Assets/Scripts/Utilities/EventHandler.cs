@@ -231,4 +231,15 @@ public static class EventHandler
     {
         PlaySoundEvent?.Invoke(soundName);
     }
+
+    /// <summary>
+    /// 写一个方法，开始一个新游戏，然后让每一个方法，需要重置数据的，都执行注册这个事件，然后执行数据，例如NPC坐标等数据
+    /// index 是判断传进来的是哪一个游戏进度
+    /// </summary>
+    public static event Action<int> StartNewGameEvent;
+    public static void CallStartNewGameEvent(int index)
+    {
+        StartNewGameEvent?.Invoke(index);
+    }
+
 }

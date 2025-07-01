@@ -7,7 +7,9 @@ public class LightManager : MonoBehaviour
     private LightControl[] sceneLights;
     private LightShift currentLightShift;
     private Season currentSeason;
-    private float timeDifference;
+
+    //timeDifference初始赋值，来确保在存档读入已经黑天的时候，不会再从白天逐渐变黑天，反之同理
+    private float timeDifference = Settings.lightChangeDuration; 
 
     private void OnEnable()
     {

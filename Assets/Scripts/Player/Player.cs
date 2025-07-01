@@ -26,6 +26,7 @@ public class Player : MonoBehaviour,ISaveable
     {
         rb = GetComponent<Rigidbody2D>();
         animators = GetComponentsInChildren<Animator>();
+        inputDisable = true;
     }
     private void Start()
     {

@@ -46,6 +46,10 @@ public class NPCMovement : MonoBehaviour,ISaveable
     private bool npcMove;
     private bool sceneLoaded;
     public bool interactable;
+    //判断是不是第一次加载，如果是第一个加载，就不用创建新的Schedule，如果不是，就需要创建另外的去继续之前的进度
+    public bool isFirstLoad;
+
+    private Season currentSeason;
 
     //动画计时器
     private float animationBreakTime;
@@ -126,6 +130,8 @@ public class NPCMovement : MonoBehaviour,ISaveable
     private void OnGameMinuteEvent(int minute, int hour, int day, Season season)
     {
         int time = (hour * 100) + minute;
+        currentSeason = season;
+
         ScheduleDetails matchSchedule = null;
         foreach(var schedule in scheduleSet)
         {
@@ -161,6 +167,16 @@ public class NPCMovement : MonoBehaviour,ISaveable
             isInitialised = true;
         }
         sceneLoaded = true;
+
+        if (!isFirstLoad)
+        {
+            //如果不是第一次加载，就需要创建另外Schedule的去继续之前的进度
+            currentGridPosition = grid.WorldToCell(transform.position);
+            var schedule = new ScheduleDetails(0, 0, 0, 0,currentSeason,targetScene,(Vector2Int)targetGridPosition,stopAnimationClip,interactable);
+            BuildPath(schedule);
+            isFirstLoad = true;
+
+        }
     }
 
 
@@ -254,6 +270,7 @@ public class NPCMovement : MonoBehaviour,ISaveable
     {
         movementSteps.Clear();
         currentSchedule = schedule;
+        targetScene = schedule.targetScene;//帮助NPC在加载了另一个已有数据存档的时候，重新构建目标场景
         targetGridPosition = (Vector3Int)schedule.targetGridPosition;
         stopAnimationClip = schedule.clipAtStop;
         this.interactable = schedule.interactable; //控制NPC是否可以互动
@@ -447,7 +464,8 @@ public class NPCMovement : MonoBehaviour,ISaveable
             saveData.animationInstanceID = stopAnimationClip.GetInstanceID();
         }
         saveData.interactable = this.interactable;
-
+        saveData.timeDict = new Dictionary<string, int>();
+        saveData.timeDict.Add("currentSeason", (int)currentSeason);
         return saveData;
     }
     /// <summary>
@@ -457,6 +475,8 @@ public class NPCMovement : MonoBehaviour,ISaveable
     public void RestoreData(GameSaveData saveData)
     {
         isInitialised = true; //已初始化标志
+
+        isFirstLoad = false;
 
         //坐标
         currentScene = saveData.dataSceneName;
@@ -472,6 +492,7 @@ public class NPCMovement : MonoBehaviour,ISaveable
         }
         //是否可互动
         this.interactable = saveData.interactable;
+        this.currentSeason = (Season)saveData.timeDict["currentSeason"];
     }
 
 

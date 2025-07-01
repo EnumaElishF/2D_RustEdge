@@ -412,7 +412,9 @@ namespace Farm.Inventory
         public void RestoreData(GameSaveData saveData)
         {
             this.playerMoney = saveData.playerMoney; //钱
-
+            //赋值playerBagTemp初始化到playerBag，确保一开始不管playerBag有没有数据，都生成一个空的26格给他
+            playerBag = Instantiate(playerBagTemp);
+            //然后去存档中，找出对应的数据
             playerBag.itemList = saveData.inventoryDict[playerBag.name]; //背包
             
             foreach(var item in saveData.inventoryDict)//箱子

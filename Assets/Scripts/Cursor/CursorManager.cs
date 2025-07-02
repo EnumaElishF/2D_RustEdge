@@ -270,7 +270,9 @@ public class CursorManager : MonoBehaviour
                     break;
                 case ItemType.Furniture:
                     buildImage.gameObject.SetActive(true);
-                    if (currentTile.canPlaceFurniture && InventoryManager.Instance.CheckStock(currentItem.itemID))
+                    var bluePrintDetails = InventoryManager.Instance.bluePrintData.GetBluePrintDetails(currentItem.itemID);
+
+                    if (currentTile.canPlaceFurniture && InventoryManager.Instance.CheckStock(currentItem.itemID)&& !HaveFurnitureInRadius(bluePrintDetails))
                         SetCursorValid();
                     else
                         SetCursorInValid();
@@ -281,6 +283,26 @@ public class CursorManager : MonoBehaviour
         {
             SetCursorInValid();
         }
+    }
+
+    /// <summary>
+    /// 检测范围上，是否有家具 ：家具，箱子，在指定的范围区域之内，不能再有其他的碰撞体,防止家具重叠到一块
+    /// </summary>
+    /// <param name="bluePrintDetails"></param>
+    /// <returns></returns>
+    private bool HaveFurnitureInRadius(BluePrintDetails bluePrintDetails)
+    {
+        var buildItem = bluePrintDetails.buildPrefab;
+        Vector2 point = mouseWorldPos;
+        var size = buildItem.GetComponent<BoxCollider2D>().size;
+
+        var otherColl = Physics2D.OverlapBox(point, size, 0);
+        if (otherColl != null)
+        {
+            return otherColl.GetComponent<Furniture>();
+        }
+
+        return false;
     }
 
     /// <summary>

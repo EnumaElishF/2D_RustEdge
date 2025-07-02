@@ -46,6 +46,7 @@ public class Player : MonoBehaviour,ISaveable
         EventHandler.UpdateGameStateEvent += OnUpdateGameStateEvent;
 
         EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+        EventHandler.EndGameEvent += OnEndGameEvent;
     }
 
 
@@ -61,9 +62,11 @@ public class Player : MonoBehaviour,ISaveable
         EventHandler.UpdateGameStateEvent -= OnUpdateGameStateEvent;
 
         EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+        EventHandler.EndGameEvent -= OnEndGameEvent;
 
 
     }
+
 
     private void Update()
     {
@@ -92,6 +95,10 @@ public class Player : MonoBehaviour,ISaveable
 
     }
 
+    private void OnEndGameEvent()
+    {
+        inputDisable = true;
+    }
     private void OnUpdateGameStateEvent(GameState gameState)
     {
         switch (gameState)

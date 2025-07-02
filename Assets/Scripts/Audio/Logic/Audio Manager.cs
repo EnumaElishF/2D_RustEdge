@@ -28,13 +28,25 @@ public class AudioManager : Singleton<AudioManager>
     {
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
         EventHandler.PlaySoundEvent += OnPlaySoundEvent;
+        EventHandler.EndGameEvent += OnEndGameEvent;
     }
     private void OnDisable()
     {
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
         EventHandler.PlaySoundEvent -= OnPlaySoundEvent;
+        EventHandler.EndGameEvent -= OnEndGameEvent;
 
     }
+
+    private void OnEndGameEvent()
+    {
+        if (soundRoutine != null)
+        {
+            StopCoroutine(soundRoutine); //关闭协程soundRoutine
+        }
+        muteSnapShot.TransitionTo(1f); //在1f内过渡到静音
+    }
+
     /// <summary>
     /// 实现一个音效的接力，通过音效名称，去调用本次音效的生成
     /// </summary>
@@ -116,5 +128,10 @@ public class AudioManager : Singleton<AudioManager>
     private float ConvertSoundVolume(float amount)
     {
         return (amount * 100 - 80);
+    }
+    public void SetMastetVolume(float value)
+    {
+        //给一个-80到+20的值给到MasterVolume
+        audioMixer.SetFloat("MasterVolume", (value * 100 - 80));
     }
 }

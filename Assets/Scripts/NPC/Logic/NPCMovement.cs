@@ -41,6 +41,7 @@ public class NPCMovement : MonoBehaviour,ISaveable
     private Animator anim;
     private Grid grid;
     private Stack<MovementStep> movementSteps;
+    private Coroutine npcMoveRoutineCoroutine; //协程
 
     private bool isInitialised;
     private bool npcMove;
@@ -94,15 +95,31 @@ public class NPCMovement : MonoBehaviour,ISaveable
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
         EventHandler.BeforeSceneUnloadEvent += OnBeforeSceneUnloadEvent;
         EventHandler.GameMinuteEvent += OnGameMinuteEvent;
+
+        EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+        EventHandler.EndGameEvent += OnEndGameEvent;
     }
+
+
+
     private void OnDisable()
     {
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
         EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
         EventHandler.GameMinuteEvent -= OnGameMinuteEvent;
 
+        EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+        EventHandler.EndGameEvent -= OnEndGameEvent;
+
 
     }
+
+    private void OnStartNewGameEvent(int obj)
+    {
+        isInitialised = false;
+        isFirstLoad = true;
+    }
+
     private void Start()
     {
         //ISaveable进行注册
@@ -126,6 +143,17 @@ public class NPCMovement : MonoBehaviour,ISaveable
     {
         if (sceneLoaded)
             Movement();
+    }
+
+    private void OnEndGameEvent()
+    {
+        sceneLoaded = false;
+        npcMove = false;
+        if(npcMoveRoutineCoroutine != null)
+        {
+            //只停止指定协程，npcMoveRoutineCoroutine。不能停止所有协程，因为渐入渐出这种协程效果不能关
+            StopCoroutine(npcMoveRoutineCoroutine);
+        }
     }
     private void OnGameMinuteEvent(int minute, int hour, int day, Season season)
     {
@@ -227,7 +255,7 @@ public class NPCMovement : MonoBehaviour,ISaveable
 
     private void MoveToGridPosition(Vector3Int gridPos,TimeSpan stepTime)
     {
-        StartCoroutine(MoveRoutine(gridPos, stepTime));
+        npcMoveRoutineCoroutine = StartCoroutine(MoveRoutine(gridPos, stepTime));
     }
     private IEnumerator MoveRoutine(Vector3Int gridPos,TimeSpan stepTime)
     {

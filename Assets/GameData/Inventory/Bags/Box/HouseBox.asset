@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67bac8feb088f134fb4b79db3ec40ce9, type: 3}
+  m_Name: HouseBox
+  m_EditorClassIdentifier: 
+  itemList:
+  - itemID: 1050
+    itemAmount: 90
+  - itemID: 1051
+    itemAmount: 90
+  - itemID: 1018
+    itemAmount: 90
+  - itemID: 1015
+    itemAmount: 90
+  - itemID: 1007
+    itemAmount: 90
+  - itemID: 1023
+    itemAmount: 90
+  - itemID: 0
+    itemAmount: 0
+  - itemID: 0
+    itemAmount: 0
+  - itemID: 0
+    itemAmount: 0

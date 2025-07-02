@@ -242,4 +242,12 @@ public static class EventHandler
         StartNewGameEvent?.Invoke(index);
     }
 
+    /// <summary>
+    /// 结束游戏的事件
+    /// </summary>
+    public static event Action EndGameEvent;
+    public static void CallEndGameEvent()
+    {
+        EndGameEvent?.Invoke();
+    }
 }

@@ -21,7 +21,8 @@ namespace Farm.Save
                 if (dataDict.ContainsKey(key))
                 {
                     var timeData = dataDict[key];
-                    return timeData.timeDict["gameYear"] + "年/" + (Season)timeData.timeDict["gameSeason"] + "/" + timeData.timeDict["gameMonth"] + "月/" + timeData.timeDict["gameDay"] + "日/";
+                    //存档时间
+                    return timeData.timeDict["gameYear"] + "年/" + (Season)timeData.timeDict["gameSeason"] + "/" + timeData.timeDict["gameMonth"] + "月/" + timeData.timeDict["gameDay"] + "日/"+timeData.timeDict["gameHour"]+":"+timeData.timeDict["gameMinute"];
                 }
                 else return string.Empty;
             }

@@ -27,20 +27,21 @@ namespace Farm.Transition
             EventHandler.TransitionEvent += OnTransitionEvent;
 
             EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+            EventHandler.EndGameEvent += OnEndGameEvent;
 
         }
+
+
         private void OnDisable()
         {
             EventHandler.TransitionEvent -= OnTransitionEvent;
 
             EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+            EventHandler.EndGameEvent -= OnEndGameEvent;
 
         }
 
-        private void OnStartNewGameEvent(int obj)
-        {
-            StartCoroutine(LoadSaveDataScene(startSceneName));
-        }
+
 
         private void Start()
         {
@@ -51,6 +52,16 @@ namespace Farm.Transition
             fadeCanvasGroup = FindFirstObjectByType<CanvasGroup>();
         }
 
+
+        private void OnEndGameEvent()
+        {
+            //结束游戏，要执行：加载界面，卸载当前场景，退出加载界面
+            StartCoroutine(UnloadScene());
+        }
+        private void OnStartNewGameEvent(int obj)
+        {
+            StartCoroutine(LoadSaveDataScene(startSceneName));
+        }
 
         private void OnTransitionEvent(string sceneToGo, Vector3 positionToGo)
         {
@@ -142,6 +153,20 @@ namespace Farm.Transition
             yield return Fade(0);
 
         }
+
+
+        private IEnumerator UnloadScene()
+        {
+            EventHandler.CallBeforeSceneUnloadEvent();
+            yield return Fade(1f);
+            //进入加载界面，然后
+            //卸载当前激活场景
+            yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+            //退出加载界面
+            yield return Fade(0f);
+        }
+
+
         /// <summary>
         /// 存储数据: 实现自ISaveable接口的 GenerateSaveData
         /// </summary>

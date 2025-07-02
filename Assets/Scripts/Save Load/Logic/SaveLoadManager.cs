@@ -29,10 +29,12 @@ namespace Farm.Save
         private void OnEnable()
         {
             EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+            EventHandler.EndGameEvent += OnEndGameEvent;
         }
         private void OnDisable()
         {
             EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+            EventHandler.EndGameEvent -= OnEndGameEvent;
 
         }
 
@@ -47,6 +49,10 @@ namespace Farm.Save
 
         }
 
+        private void OnEndGameEvent()
+        {
+            Save(currentDataIndex); //结束游戏保存当前index的Data数据
+        }
 
         private void OnStartNewGameEvent(int index)
         {

@@ -28,8 +28,11 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
         EventHandler.UpdateGameStateEvent += OnUpdateGameStateEvent;
 
         EventHandler.StartNewGameEvent += OnStartNewGameEvent;
+        EventHandler.EndGameEvent += OnEndGameEvent;
 
     }
+
+
     private void OnDisable()
     {
         EventHandler.BeforeSceneUnloadEvent -= OnBeforeSceneUnloadEvent;
@@ -37,6 +40,7 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
         EventHandler.UpdateGameStateEvent -= OnUpdateGameStateEvent;
 
         EventHandler.StartNewGameEvent -= OnStartNewGameEvent;
+        EventHandler.EndGameEvent -= OnEndGameEvent;
 
     }
 
@@ -87,6 +91,12 @@ public class TimeManager : Singleton<TimeManager>,ISaveable
             EventHandler.CallGameDayEvent(gameDay, gameSeason);
             EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
         }
+    }
+
+
+    private void OnEndGameEvent()
+    {
+        gameClockPause = true;
     }
 
     //需要在新游戏开始时重置的数据

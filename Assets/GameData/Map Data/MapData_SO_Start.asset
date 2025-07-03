@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: 00_Start
   gridWidth: 42
-  gridHeight: 22
+  gridHeight: 27
   originX: -24
   originY: -14
   tileProperties:

@@ -3724,7 +3724,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1099896071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3846,7 +3846,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!320 &1103097519
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -3922,6 +3922,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startDirector: {fileID: 1103097519}
+  startScene: 00_Start
+  fieldDirector: {fileID: 0}
+  fieldScene: 01_Field
 --- !u!4 &1133451331
 Transform:
   m_ObjectHideFlags: 0
@@ -6058,6 +6061,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuPrefab: {fileID: 8660192481468993742, guid: 3a8571ac76e66864b838ece7ba97d9f9, type: 3}
+  settingsBtn: {fileID: 0}
+  pausePanel: {fileID: 0}
+  volumeSlider: {fileID: 0}
 --- !u!4 &1958669515
 Transform:
   m_ObjectHideFlags: 0

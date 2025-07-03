@@ -66,4 +66,4 @@ MonoBehaviour:
       gotoGridCell: {x: 99999, y: 99999}
     - sceneName: 00_Start
       fromGridCell: {x: 99999, y: 99999}
-      gotoGridCell: {x: -4, y: 4}
+      gotoGridCell: {x: -4, y: 11}

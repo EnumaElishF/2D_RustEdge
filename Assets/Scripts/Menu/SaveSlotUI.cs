@@ -13,7 +13,7 @@ public class SaveSlotUI : MonoBehaviour
 
     [Header("´æµµÉ¾³ý°´Å¥")]
     public Button deleteButton;
-    public GameObject deleteCheckPanel;
+    public GameObject deleteCheckCanvas;
     public Button deleteButtonY;
     public Button deleteButtonN;
 
@@ -73,7 +73,7 @@ public class SaveSlotUI : MonoBehaviour
     private void OpenDeleteWindow()
     {
         //´ò¿ªÉ¾³ý´°¿Ú£º
-        deleteCheckPanel.SetActive(true);
+        deleteCheckCanvas.SetActive(true);
     }
     /// <summary>
     /// É¾³ý´æµµ
@@ -125,6 +125,6 @@ public class SaveSlotUI : MonoBehaviour
     }
     private void CloseDeleteWindow()
     {
-        deleteCheckPanel.SetActive(false);
+        deleteCheckCanvas.SetActive(false);
     }
 }

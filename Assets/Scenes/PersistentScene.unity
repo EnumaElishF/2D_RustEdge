@@ -3902,6 +3902,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1133451331}
   - component: {fileID: 1133451330}
+  - component: {fileID: 1133451332}
   m_Layer: 0
   m_Name: TimelineManager
   m_TagString: Untagged
@@ -3940,6 +3941,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1133451332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133451329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e1cbb3ff0a539d4aad062b447713414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 
 --- !u!1 &1149510968
 GameObject:
   m_ObjectHideFlags: 0

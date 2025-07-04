@@ -65,7 +65,11 @@ namespace Farm.Save
         /// </summary>
         public int animationInstanceID;
 
-
+        //------Timeline
+        /// <summary>
+        /// 场景动画的到达次数判断
+        /// </summary>
+        public Dictionary<string, int> sceneTimelineCount;
     }
 
 }

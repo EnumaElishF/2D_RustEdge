@@ -1,9 +1,6 @@
 using Farm.Save;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 //所有和背包数据有关的内容和物品都放在这个同一个命名空间中Farm.Inventory;除非代码使用using Farm.Inventory,否则无法调用
 //继承Singleton实现单例

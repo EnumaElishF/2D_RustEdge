@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
-
+//#if UNITY_EDITOR 必须加入以避免在Build时的报错，决定该代码只在编辑器模式下使用
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(SceneNameAttribute))]
 public class SceneNameDrawer : PropertyDrawer
 {
@@ -78,3 +79,4 @@ public class SceneNameDrawer : PropertyDrawer
         property.stringValue = sceneNames[sceneIndex].text;
     }
 }
+#endif

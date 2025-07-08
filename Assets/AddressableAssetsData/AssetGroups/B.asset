@@ -18,7 +18,12 @@ MonoBehaviour:
   m_GUID: ef76ddb74c4a94e4885af1aa134429ef
   m_SerializeEntries:
   - m_GUID: bc2d4f5f599210041a957f3941f1e81e
-    m_Address: Assets/ExternalAssets/Hot/Sword.png
+    m_Address: Sword
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68b6bd163c8cc9842ac0dd3ee548feb9
+    m_Address: Girl_006_Hot
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

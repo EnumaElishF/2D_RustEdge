@@ -18,7 +18,12 @@ MonoBehaviour:
   m_GUID: fe2a250f39bdccd418e0d01fb0692d1a
   m_SerializeEntries:
   - m_GUID: 27504e0f82828ea40b35804ebe36576a
-    m_Address: Assets/ExternalAssets/Hot/Weapon.prefab
+    m_Address: Weapon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2687cf39cd7e5574cb168e5b4a6f4c89
+    m_Address: NPC_Girl05
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

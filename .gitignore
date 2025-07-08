@@ -98,3 +98,25 @@ crashlytics-build.properties
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+
+
+### HybridCLR 补充规则 ###
+# 生成的中间文件和编译产物 ：注意目录位置，如果在/[Aa]ssets文件夹下那么，加/[Aa]ssets头缀
+/HybridCLRData/AssembliesPostIl2CppStrip/
+/HybridCLRData/HotUpdateDlls/
+/HybridCLRData/Metadata/
+/HybridCLRData/Editor/Generated/
+/HybridCLRData/LinkXml/
+
+/HybridCLRData/LocalIl2CppData-*
+
+
+# HybridCLR临时文件和日志
+/HybridCLRData/Temp/
+/HybridCLRData/Logs/
+
+
+# HybridCLR平台特定的构建输出
+/HybridCLRData/Assemblies/Android/
+/HybridCLRData/Assemblies/IOS/
+/HybridCLRData/Assemblies/Standalone/

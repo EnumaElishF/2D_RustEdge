@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: A
+  m_EditorClassIdentifier: 
+  m_GroupName: A
+  m_Data:
+    m_SerializedData: []
+  m_GUID: fe2a250f39bdccd418e0d01fb0692d1a
+  m_SerializeEntries:
+  - m_GUID: 27504e0f82828ea40b35804ebe36576a
+    m_Address: Assets/ExternalAssets/Hot/Weapon.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 9eeadff7508f48c4d87813bd00585ba9, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 3855b42afa893fd4bab453965e5aa4c7, type: 2}
+    - {fileID: 11400000, guid: 171a86740ab4c0e43b140ab9bb59e72a, type: 2}

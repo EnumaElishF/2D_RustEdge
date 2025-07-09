@@ -15,15 +15,15 @@ MonoBehaviour:
   m_GroupName: A
   m_Data:
     m_SerializedData: []
-  m_GUID: fe2a250f39bdccd418e0d01fb0692d1a
+  m_GUID: ef76ddb74c4a94e4885af1aa134429ef
   m_SerializeEntries:
-  - m_GUID: 27504e0f82828ea40b35804ebe36576a
-    m_Address: Weapon
+  - m_GUID: bc2d4f5f599210041a957f3941f1e81e
+    m_Address: Sword
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2687cf39cd7e5574cb168e5b4a6f4c89
-    m_Address: NPC_Girl05
+  - m_GUID: 68b6bd163c8cc9842ac0dd3ee548feb9
+    m_Address: Girl_006_Hot
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -31,5 +31,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 9eeadff7508f48c4d87813bd00585ba9, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 3855b42afa893fd4bab453965e5aa4c7, type: 2}
-    - {fileID: 11400000, guid: 171a86740ab4c0e43b140ab9bb59e72a, type: 2}
+    - {fileID: 11400000, guid: 8a0c3081c8edd854086a630d8b29e68d, type: 2}
+    - {fileID: 11400000, guid: f5a055acad4a89843b19c2fa81280a06, type: 2}

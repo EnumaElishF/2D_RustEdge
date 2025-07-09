@@ -21,6 +21,21 @@ public class TestAddressables : MonoBehaviour
         //Addressables的卸载，：注编辑器下是不会真的卸载的，因为资源存好了，但是Build的会卸载
         Addressables.Release(go);*/
     }
+    /// <summary>
+    /// 查看路径：ab包缓存路径，持久化目录的路径
+    /// </summary>
+    [ContextMenu(nameof(PrintABCachePath))]
+    private void PrintABCachePath()
+    {
+        //输出，持久化目录的路径
+        Debug.Log($"{Application.persistentDataPath}/com.unity.addressables");
+
+        //输出，ab包缓存路径
+        for (int i = 0; i < Caching.cacheCount; i++)
+        {
+            Debug.Log(Caching.GetCacheAt(i).path);
+        }
+    }
 
     private void TestAddressables_Completed(AsyncOperationHandle<GameObject> obj)
     {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
@@ -7,20 +8,38 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class HotUpdateSystem : MonoBehaviour
 {
+    //持久化目录的路径
+    //private string persistentDataPath_addressables = $"{Application.persistentDataPath}/com.unity.addressables";
+    private string persistentDataPath_addressables;
     // Start is called before the first frame update
     void Start()
     {
+        persistentDataPath_addressables = $"{Application.persistentDataPath}/com.unity.addressables";
+
         StartCoroutine(HotUpdate());
     }
 
     private IEnumerator HotUpdate()
     {
+        //断点续传
+        int hotUpdateState = PlayerPrefs.GetInt("HotUpdateSucceed", 0); //标记:0
+        if (hotUpdateState == 0)//代表上一次热更没有成功
+        {
+            Debug.Log("断点续传");
+            if (Directory.Exists(persistentDataPath_addressables)) Directory.Delete(persistentDataPath_addressables, true);
+        }
+        //PlayerPrefs 是 Unity 提供的一种轻量级本地数据存储工具，用于保存简单的键值对
+        //这里的键 HotUpdateSucceed 是一个自定义的状态标记，用于记录 “热更新是否成功完成”：
+        PlayerPrefs.SetInt("HotUpdateSucceed", 0);
+
         //初始化
         yield return Addressables.InitializeAsync();
 
         //检查目录更新
         //yield return协程会暂停执行，然后去执行checkForCatalogUpdatesHandle直到结束，再恢复协程
         yield return CheckForCatalogUpdates();
+        PlayerPrefs.SetInt("HotUpdateSucceed", 1);
+
 
         //下载最新的目录
 

@@ -1,0 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HotUpdateWindow : MonoBehaviour
+{
+    public Image progressBarFill;
+    public Text progressText;
+    public float updateSpeed = 0.5f;
+
+    private long totalBytes;
+    private float currentProgress;
+    private float progress;
+    public void Show(long totalBytes)
+    {
+        gameObject.SetActive(true);
+        this.totalBytes = totalBytes;
+    }
+    public void UpdateDownloadedProgress(float progress)
+    {
+        this.progress = progress;
+
+    }
+    /// <summary>
+    /// 已下载进度
+    /// </summary>
+    /// <param name="downloadedBytes"></param>
+    public void UpdateDownloadedBytes(long downloadedBytes)
+    {
+        //要让进度条平滑一些,在updateSpeed上作为限制,  progress是实际的下载总进度
+        progress = (float)downloadedBytes / (float)totalBytes;
+
+    }
+    private void Update()
+    {
+        currentProgress = Mathf.MoveTowards(currentProgress, progress, Time.deltaTime * updateSpeed);
+        progressBarFill.fillAmount = currentProgress;
+        //除两次1024从Byte变成KB，MB
+        progressText.text = $"{totalBytes * currentProgress / 1024f / 1024f}MB/{totalBytes / 1024f / 1024f}MB";
+
+    }
+
+}

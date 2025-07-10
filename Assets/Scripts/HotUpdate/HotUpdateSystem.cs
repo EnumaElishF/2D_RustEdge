@@ -8,14 +8,13 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class HotUpdateSystem : MonoBehaviour
 {
+    public HotUpdateWindow hotUpdateWindow;
+
     //持久化目录的路径
-    //private string persistentDataPath_addressables = $"{Application.persistentDataPath}/com.unity.addressables";
-    private string persistentDataPath_addressables;
+    private string persistentDataPath_addressables => $"{Application.persistentDataPath}/com.unity.addressables";
     // Start is called before the first frame update
     void Start()
     {
-        persistentDataPath_addressables = $"{Application.persistentDataPath}/com.unity.addressables";
-
         StartCoroutine(HotUpdate());
     }
 
@@ -106,7 +105,7 @@ public class HotUpdateSystem : MonoBehaviour
         //最终不管成功还是失败都要Release掉
         Addressables.Release(updateCatalogsHandle);
     }
-    //获取下载量 ：给用户展示当前的下载进度
+    //获取下载量     ：给用户展示当前的下载进度
     private IEnumerator GetDownloadSize(IEnumerable<object> keys)
     {
         AsyncOperationHandle<long> sizeHandle  = Addressables.GetDownloadSizeAsync(keys);
@@ -121,6 +120,8 @@ public class HotUpdateSystem : MonoBehaviour
             long downLoadSize = sizeHandle.Result;
             if (downLoadSize > 0)
             {
+                hotUpdateWindow.Show(downLoadSize);
+
                 yield return DownLoadDependencies(keys, downLoadSize);
             }
             else
@@ -145,10 +146,13 @@ public class HotUpdateSystem : MonoBehaviour
                 Debug.LogError($"DownLoadDependencies失败:{downloadHandle.OperationException}");
                 break;
             }
-            // TODO : 分发下载进度
-            float percentage = downloadHandle.GetDownloadStatus().Percent; //百分比下载进度
-            float currentDownloadSize = downLoadSize * percentage; // 当前的下载量(字节)
+
+            // 分发下载进度
+            float percentage = downloadHandle.GetDownloadStatus().Percent; //百分比下载进度(0到1)
+            long currentDownloadSize = (long) (downLoadSize * percentage); // 当前的下载量(字节)
             Debug.Log($"下载进度:{currentDownloadSize}/{downLoadSize}");
+
+            hotUpdateWindow.UpdateDownloadedProgress(downloadHandle.GetDownloadStatus().Percent );
             yield return null;
         }
         Debug.Log("热更完成");

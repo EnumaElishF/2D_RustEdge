@@ -109,7 +109,8 @@ crashlytics-build.properties
 /HybridCLRData/LinkXml/
 
 /HybridCLRData/LocalIl2CppData-*
-
+# StrippedAOTDllsTempProj是 HybridCLR 在处理 AOT DLL 时创建的临时项目文件夹，包含中间编译产物和临时文件
+/HybridCLRData/StrippedAOTDllsTempProj 
 
 # HybridCLR临时文件和日志
 /HybridCLRData/Temp/

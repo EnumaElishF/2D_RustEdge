@@ -1,3 +1,4 @@
+using HybridCLR;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
+using System.Reflection;
 public class HotUpdateSystem : MonoBehaviour
 {
     public const string hotUpdateWindowKey = "HotUpdateWindow";
@@ -181,5 +183,48 @@ public class HotUpdateSystem : MonoBehaviour
 
         //热更完成可以去跳转到需要的场景
         //SceneManager.LoadScene("Game");
+    }
+    /// <summary>
+    /// 加载AOT程序集元数据
+    /// </summary>
+    public  void LoadMetadataForAOTAssembly()
+    {
+        List<string> aotDllList = new List<string>
+        {
+            "mscorlib.dll",
+            "System.dll",
+            "System.Core.dll", // 如果使用了Linq，需要这个
+            // "Newtonsoft.Json.dll",
+            // "protobuf-net.dll",
+        };
+        List<TextAsset> aotDllTextList = new List<TextAsset>();
+        foreach (TextAsset aotDllText in aotDllTextList)
+        {
+            byte[] dllBytes = aotDllText.bytes;
+            // 执行补充元数据时内部会自动将dllBytes复制一份，调用完成后请不要将dllBytes保存，造成无谓的内存浪费
+            LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, HomologousImageMode.SuperSet);
+            Debug.Log($"LoadMetadataForAOTAssembly:{aotDllText.name}. ret:{err}");
+        }
+    }
+    /// <summary>
+    /// 加载热更新程序集
+    /// </summary>
+    private void LoadHotUpdateAssembly()
+    {
+        //不能在Editor下运行
+        // Editor环境下，HotUpdate.dll.bytes已经被自动加载，不需要加载，重复加载反而会出问题。
+#if UNITY_EDITOR
+        return;
+#endif
+
+        List<TextAsset> hotUpdateDllTextList = new List<TextAsset>();
+        foreach (TextAsset dllText in hotUpdateDllTextList)
+        {
+            byte[] dllBytes = dllText.bytes;
+            Assembly.Load(dllBytes);
+
+        }
+        Assembly hotUpdateAss = Assembly.Load(File.ReadAllBytes($"{Application.streamingAssetsPath}/HotUpdate.dll.bytes"));
+
     }
 }

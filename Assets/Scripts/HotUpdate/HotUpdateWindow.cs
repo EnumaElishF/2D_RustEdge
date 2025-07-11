@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HotUpdateWindow : MonoBehaviour
+public class HotUpdateWindow : MonoBehaviour,IHotUpdateWindow
 {
     public Image progressBarFill;
     public Text progressText;

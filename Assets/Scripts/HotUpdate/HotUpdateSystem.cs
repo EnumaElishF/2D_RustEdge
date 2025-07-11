@@ -5,11 +5,11 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
-
+using UnityEngine.SceneManagement;
 public class HotUpdateSystem : MonoBehaviour
 {
-    public HotUpdateWindow hotUpdateWindow;
-
+    public const string hotUpdateWindowKey = "HotUpdateWindow";
+    public IHotUpdateWindow hotUpdateWindow;
     //持久化目录的路径
     private string persistentDataPath_addressables => $"{Application.persistentDataPath}/com.unity.addressables";
     // Start is called before the first frame update
@@ -71,6 +71,7 @@ public class HotUpdateSystem : MonoBehaviour
             else
             {
                 Debug.Log("无需更新");
+                JumpToGameScene();
             }
 
         }
@@ -88,6 +89,7 @@ public class HotUpdateSystem : MonoBehaviour
         }
         else
         {
+            yield return  LoadHotUpdateWindow(); //当目录拿到以后，先下载HotUpdateWindow相关的内容并加载出窗口
             Debug.Log($"updateCatalogs成功");
             List<IResourceLocator> locatorList =  updateCatalogsHandle.Result;
             if (locatorList.Count > 0)
@@ -127,6 +129,7 @@ public class HotUpdateSystem : MonoBehaviour
             else
             {
                 Debug.Log("无需更新");
+                JumpToGameScene();
             }
         }
         Addressables.Release(sizeHandle);
@@ -156,5 +159,27 @@ public class HotUpdateSystem : MonoBehaviour
             yield return null;
         }
         Debug.Log("热更完成");
+        JumpToGameScene();
+
+    }
+
+    //
+    private IEnumerator LoadHotUpdateWindow()
+    {
+        yield return Addressables.DownloadDependenciesAsync(hotUpdateWindowKey, true);
+        hotUpdateWindow = Addressables.InstantiateAsync(hotUpdateWindowKey).WaitForCompletion().GetComponent<IHotUpdateWindow>();
+    }
+
+    private void JumpToGameScene()
+    {
+        if (hotUpdateWindow != null)
+        {
+            //hotUpdateWindow转换成MonoBehaviour或者更上层的Component，因为他一定个组件
+            Addressables.Release(((Component)hotUpdateWindow).gameObject);
+        }
+
+
+        //热更完成可以去跳转到需要的场景
+        //SceneManager.LoadScene("Game");
     }
 }

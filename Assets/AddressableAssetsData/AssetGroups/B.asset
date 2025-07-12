@@ -27,6 +27,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8a56ed520d3d0443be72f2c0e8d3c0c
+    m_Address: Unity.Timeline.dll
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 9eeadff7508f48c4d87813bd00585ba9, type: 2}
   m_SchemaSet:

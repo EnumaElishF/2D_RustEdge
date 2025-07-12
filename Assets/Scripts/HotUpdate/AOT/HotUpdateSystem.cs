@@ -169,6 +169,7 @@ public class HotUpdateSystem : MonoBehaviour
     private IEnumerator LoadHotUpdateWindow()
     {
         yield return Addressables.DownloadDependenciesAsync(hotUpdateWindowKey, true);
+        // TODO 加载优先热更程序集：PriorityHotUpdate_Assembly
         hotUpdateWindow = Addressables.InstantiateAsync(hotUpdateWindowKey).WaitForCompletion().GetComponent<IHotUpdateWindow>();
     }
 

@@ -1,0 +1,16 @@
+{
+    "name": "PriorityHotUpdate",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c73b354fbdb98b64da84c95381a67fc9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

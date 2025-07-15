@@ -10,16 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: AOTdll
+  m_Name: HotUpdate
   m_EditorClassIdentifier: 
-  m_GroupName: AOTdll
+  m_GroupName: HotUpdate
   m_Data:
     m_SerializedData: []
-  m_GUID: e4964d1132a115842bcb10ef2f62489d
-  m_SerializeEntries: []
+  m_GUID: e9b8957dad086ef489fe2224bc283144
+  m_SerializeEntries:
+  - m_GUID: d7c15d9cc9930fd4dbc7b55e49106e59
+    m_Address: HotUpdate.dll
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 9eeadff7508f48c4d87813bd00585ba9, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: f0cb73f2f940aaf49a2ecdf0cd73a285, type: 2}
-    - {fileID: 11400000, guid: cdea78aaa76b9b4438357dd7f817607e, type: 2}
+    - {fileID: 11400000, guid: 338101a986e826b42a88e797d848327e, type: 2}
+    - {fileID: 11400000, guid: ad4853c5811574d4f9ccc3a55b5f9912, type: 2}

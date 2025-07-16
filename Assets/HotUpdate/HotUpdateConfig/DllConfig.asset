@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: DllConfig
   m_EditorClassIdentifier: 
   aot:
-  - AOT
-  - mscorlib
-  - System
-  - System.Core
-  - Unity.Addressables
-  - Unity.ResourceManager
-  - UnityEngine
-  - UnityEngine.UI
+  - AOT.dll
+  - mscorlib.dll
+  - System.dll
+  - System.Core.dll
+  - Unity.Addressables.dll
+  - Unity.ResourceManager.dll
+  - UnityEngine.dll
+  - UnityEngine.UI.dll
   hotUpdate:
-  - HotUpdate
+  - HotUpdate.dll
   priorityHotUpdate:
-  - PriorityHotUpdate
+  - PriorityHotUpdate.dll

@@ -10,10 +10,15 @@ using UnityEngine.SceneManagement;
 using System.Reflection;
 public class HotUpdateSystem : MonoBehaviour
 {
+    public const string DllConfigKey = "DllConfig";
     public const string hotUpdateWindowKey = "HotUpdateWindow";
-    public IHotUpdateWindow hotUpdateWindow;
+    private IHotUpdateWindow hotUpdateWindow;
+    private DllConfig dllConfig;
     //持久化目录的路径
     private string persistentDataPath_addressables => $"{Application.persistentDataPath}/com.unity.addressables";
+    private string catalogPath => $"{persistentDataPath_addressables}/catalog_1.0.json";
+    //HashSet存已经加载过的dll的名称。防止多塞进去
+    private HashSet<string> loadedDlls = new HashSet<string>();
     // Start is called before the first frame update
     void Start()
     {
@@ -91,7 +96,8 @@ public class HotUpdateSystem : MonoBehaviour
         }
         else
         {
-            yield return  LoadHotUpdateWindow(); //当目录拿到以后，先下载HotUpdateWindow相关的内容并加载出窗口
+            yield return PriorityHotUpdate();
+
             Debug.Log($"updateCatalogs成功");
             List<IResourceLocator> locatorList =  updateCatalogsHandle.Result;
             if (locatorList.Count > 0)
@@ -140,6 +146,7 @@ public class HotUpdateSystem : MonoBehaviour
     //下载具体的资源
     private IEnumerator DownLoadDependencies(IEnumerable<object> keys,long downLoadSize)
     {
+        //Addressables.MergeMode.Union 是最常用的合并模式，因为它符合大多数场景下的优化需求.如果有重复的依赖项，只下载一次
         AsyncOperationHandle downloadHandle = Addressables.DownloadDependenciesAsync(keys,Addressables.MergeMode.Union, false);
         //因为涉及到下载的资源会有几百兆到上G的情况，不能适应yield return downloadHandle;这样就直接等死机了。
         //yield return downloadHandle;
@@ -165,26 +172,71 @@ public class HotUpdateSystem : MonoBehaviour
 
     }
 
-    //
-    private IEnumerator LoadHotUpdateWindow()
+    //优先热更新
+    private IEnumerator PriorityHotUpdate()
     {
+        //下载并加载DllConfig文件
+        //先下载dll配置文件
+        yield return Addressables.DownloadDependenciesAsync(DllConfigKey, true);
+        //加载DllConfig文件
+        dllConfig = Addressables.LoadAssetAsync<DllConfig>(DllConfigKey).WaitForCompletion();
+
+        //下载优先热更程序集
+        yield return Addressables.DownloadDependenciesAsync(dllConfig.priorityHotUpdate, Addressables.MergeMode.Union, true);
+       
+        //加载优先热更程序集
+        foreach(string dllName in dllConfig.priorityHotUpdate)
+        {
+            TextAsset dllText = Addressables.LoadAssetAsync<TextAsset>(dllName).WaitForCompletion();
+            LoadDll(dllName,dllText.bytes);
+
+            //完成后卸载掉
+            Addressables.Release(dllText);
+        }
+        ReloadContentCatalog(); //重新加载目录
+        //当目录拿到以后，先下载HotUpdateWindow相关的内容并加载出窗口
         yield return Addressables.DownloadDependenciesAsync(hotUpdateWindowKey, true);
-        // TODO 加载优先热更程序集：PriorityHotUpdate_Assembly
         hotUpdateWindow = Addressables.InstantiateAsync(hotUpdateWindowKey).WaitForCompletion().GetComponent<IHotUpdateWindow>();
+
     }
 
+    /// <summary>
+    /// 最后跳转到游戏场景前：需要考虑做的事情！
+    /// </summary>
     private void JumpToGameScene()
     {
+        
         if (hotUpdateWindow != null)
         {
             //hotUpdateWindow转换成MonoBehaviour或者更上层的Component，因为他一定个组件
             Addressables.Release(((Component)hotUpdateWindow).gameObject);
         }
-
+        //最后要释放掉dll配置文件
+        if (dllConfig != null)
+        {
+            Addressables.Release(dllConfig);
+        }
 
         //热更完成可以去跳转到需要的场景
         //SceneManager.LoadScene("Game");
     }
+
+    /// <summary>
+    /// 工具函数
+    /// </summary>
+    private void LoadDll(string name,byte[] bytes)
+    {
+        if (!loadedDlls.Contains(name))
+        {
+            System.Reflection.Assembly.Load(bytes);
+        }
+    }
+
+    private void ReloadContentCatalog()
+    {
+        Addressables.LoadContentCatalogAsync(catalogPath).WaitForCompletion();
+    }
+
     /// <summary>
     /// 加载AOT程序集元数据
     /// </summary>

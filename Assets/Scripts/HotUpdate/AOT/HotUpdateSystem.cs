@@ -8,6 +8,8 @@ using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using System.Reflection;
+using System.Linq;
+using System.Data.SqlTypes;
 public class HotUpdateSystem : MonoBehaviour
 {
     public const string DllConfigKey = "DllConfig";
@@ -47,9 +49,18 @@ public class HotUpdateSystem : MonoBehaviour
         PlayerPrefs.SetInt("HotUpdateSucceed", 1);
 
 
-        //下载最新的目录
+        //无论是否热更都会走到此处
+        //加载热更新程序集
+        LoadHotUpdateAssembly();
+        //加载AOT程序集元数据
+        LoadMetadataForAOTAssembly();
 
-        //下载资源
+        //跳转到游戏场景，方式一
+        //JumpToGameScene();
+        yield return StartCoroutine(JumpToGameScene());
+
+        //跳转到游戏场景，方式二
+        //Addressables.InitializeAsync("XXX").WaitForCompletion();
 
     }
 
@@ -78,7 +89,6 @@ public class HotUpdateSystem : MonoBehaviour
             else
             {
                 Debug.Log("无需更新");
-                JumpToGameScene();
             }
 
         }
@@ -137,7 +147,6 @@ public class HotUpdateSystem : MonoBehaviour
             else
             {
                 Debug.Log("无需更新");
-                JumpToGameScene();
             }
         }
         Addressables.Release(sizeHandle);
@@ -168,7 +177,6 @@ public class HotUpdateSystem : MonoBehaviour
             yield return null;
         }
         Debug.Log("热更完成");
-        JumpToGameScene();
 
     }
 
@@ -183,53 +191,36 @@ public class HotUpdateSystem : MonoBehaviour
 
         //下载优先热更程序集
         yield return Addressables.DownloadDependenciesAsync(dllConfig.priorityHotUpdate, Addressables.MergeMode.Union, true);
-       
+
+#if !UNITY_EDITOR
         //加载优先热更程序集
-        foreach(string dllName in dllConfig.priorityHotUpdate)
+        foreach (string dllName in dllConfig.priorityHotUpdate)
         {
             TextAsset dllText = Addressables.LoadAssetAsync<TextAsset>(dllName).WaitForCompletion();
-            LoadDll(dllName,dllText.bytes);
-
-            //完成后卸载掉
-            Addressables.Release(dllText);
+            LoadDll(dllText);
         }
         ReloadContentCatalog(); //重新加载目录
+#endif
+
         //当目录拿到以后，先下载HotUpdateWindow相关的内容并加载出窗口
         yield return Addressables.DownloadDependenciesAsync(hotUpdateWindowKey, true);
         hotUpdateWindow = Addressables.InstantiateAsync(hotUpdateWindowKey).WaitForCompletion().GetComponent<IHotUpdateWindow>();
 
     }
 
-    /// <summary>
-    /// 最后跳转到游戏场景前：需要考虑做的事情！
-    /// </summary>
-    private void JumpToGameScene()
-    {
-        
-        if (hotUpdateWindow != null)
-        {
-            //hotUpdateWindow转换成MonoBehaviour或者更上层的Component，因为他一定个组件
-            Addressables.Release(((Component)hotUpdateWindow).gameObject);
-        }
-        //最后要释放掉dll配置文件
-        if (dllConfig != null)
-        {
-            Addressables.Release(dllConfig);
-        }
-
-        //热更完成可以去跳转到需要的场景
-        //SceneManager.LoadScene("Game");
-    }
 
     /// <summary>
-    /// 工具函数
+    /// dll工具加载函数
     /// </summary>
-    private void LoadDll(string name,byte[] bytes)
+    private void LoadDll(TextAsset dllTextAsset)
     {
-        if (!loadedDlls.Contains(name))
+        if (!loadedDlls.Contains(dllTextAsset.name))
         {
-            System.Reflection.Assembly.Load(bytes);
+            System.Reflection.Assembly.Load(dllTextAsset.bytes);
+            loadedDlls.Add(dllTextAsset.name);
+            Debug.Log($"加载程序集:{dllTextAsset.name}");
         }
+        Addressables.Release(dllTextAsset);
     }
 
     private void ReloadContentCatalog()
@@ -242,42 +233,75 @@ public class HotUpdateSystem : MonoBehaviour
     /// </summary>
     public  void LoadMetadataForAOTAssembly()
     {
-        List<string> aotDllList = new List<string>
+        //不在Editor下运行
+#if UNITY_EDITOR
+        return;
+#endif
+
+        //补充元数据
+        foreach (string dllName in dllConfig.aot)
         {
-            "mscorlib.dll",
-            "System.dll",
-            "System.Core.dll", // 如果使用了Linq，需要这个
-            // "Newtonsoft.Json.dll",
-            // "protobuf-net.dll",
-        };
-        List<TextAsset> aotDllTextList = new List<TextAsset>();
-        foreach (TextAsset aotDllText in aotDllTextList)
-        {
-            byte[] dllBytes = aotDllText.bytes;
+            TextAsset textAsset = Addressables.LoadAssetAsync<TextAsset>(dllName).WaitForCompletion();
             // 执行补充元数据时内部会自动将dllBytes复制一份，调用完成后请不要将dllBytes保存，造成无谓的内存浪费
-            LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, HomologousImageMode.SuperSet);
-            Debug.Log($"LoadMetadataForAOTAssembly:{aotDllText.name}. ret:{err}");
+            LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(textAsset.bytes, HomologousImageMode.SuperSet);
+            Debug.Log($"LoadMetadataForAOTAssembly:{textAsset.name}. ret:{err}");
         }
+        
+        
     }
     /// <summary>
     /// 加载热更新程序集
     /// </summary>
     private void LoadHotUpdateAssembly()
     {
-        //不能在Editor下运行
+        //不需要在Editor下运行
         // Editor环境下，HotUpdate.dll.bytes已经被自动加载，不需要加载，重复加载反而会出问题。
 #if UNITY_EDITOR
         return;
 #endif
-
-        List<TextAsset> hotUpdateDllTextList = new List<TextAsset>();
-        foreach (TextAsset dllText in hotUpdateDllTextList)
+        //加载优先热更程序集
+        foreach (string dllName in dllConfig.priorityHotUpdate)
         {
-            byte[] dllBytes = dllText.bytes;
-            Assembly.Load(dllBytes);
-
+            TextAsset dllText = Addressables.LoadAssetAsync<TextAsset>(dllName).WaitForCompletion();
+            LoadDll(dllText);
         }
-        Assembly hotUpdateAss = Assembly.Load(File.ReadAllBytes($"{Application.streamingAssetsPath}/HotUpdate.dll.bytes"));
+        //加载热更程序集
+        foreach (string dllName in dllConfig.hotUpdate)
+        {
+            TextAsset dllText = Addressables.LoadAssetAsync<TextAsset>(dllName).WaitForCompletion();
+            LoadDll(dllText);
+        }
 
+        ReloadContentCatalog(); //重新加载目录
+
+    }
+
+
+
+
+    /// <summary>
+    /// 最后跳转到游戏场景前：需要考虑做的事情！
+    /// </summary>
+    private IEnumerator JumpToGameScene()
+    {
+
+        if (hotUpdateWindow != null)
+        {
+            //延迟两秒后再关
+            //
+            yield return new WaitForSeconds(2f); // 等待2秒
+
+
+            //hotUpdateWindow转换成MonoBehaviour或者更上层的Component，因为他一定个组件
+            Addressables.Release(((Component)hotUpdateWindow).gameObject);
+        }
+        //最后要释放掉dll配置文件
+        if (dllConfig != null)
+        {
+            Addressables.Release(dllConfig);
+        }
+
+        //热更完成可以去跳转到需要的场景
+        //SceneManager.LoadScene("Game");
     }
 }

@@ -155,7 +155,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1.2
-  m_Text: "\u7248\u672C\u66F4\u65B0: 0.01chek7/15\n\u7248\u672C\u66F4\u65B0: 0.02\n\u7248\u672C\u66F4\u65B0:
+  m_Text: "\u7248\u672C\u66F4\u65B0: chek7/16\n\u7248\u672C\u66F4\u65B0: 0.02\n\u7248\u672C\u66F4\u65B0:
     0.01\n\u7248\u672C\u66F4\u65B0: 0.01"
 --- !u!1 &7558612907162061565
 GameObject:

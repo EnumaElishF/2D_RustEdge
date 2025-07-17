@@ -55,12 +55,18 @@ public class HotUpdateSystem : MonoBehaviour
         //加载AOT程序集元数据
         LoadMetadataForAOTAssembly();
 
-        //跳转到游戏场景，方式一
-        //JumpToGameScene();
-        yield return StartCoroutine(JumpToGameScene());
+        if (hotUpdateWindow == null) //如果有窗口，则按照窗口的进度来
+        {
 
-        //跳转到游戏场景，方式二
-        //Addressables.InitializeAsync("XXX").WaitForCompletion();
+            //跳转到游戏场景，方式一
+            JumpToGameScene();
+            //yield return StartCoroutine(JumpToGameScene());
+
+            //跳转到游戏场景，方式二
+            //Addressables.InitializeAsync("XXX").WaitForCompletion();
+        }
+
+
 
     }
 
@@ -140,7 +146,8 @@ public class HotUpdateSystem : MonoBehaviour
             long downLoadSize = sizeHandle.Result;
             if (downLoadSize > 0)
             {
-                hotUpdateWindow.Show(downLoadSize);
+                //Show的Action onEnd直接跳转走到游戏场景
+                hotUpdateWindow.Show(downLoadSize,JumpToGameScene);
 
                 yield return DownLoadDependencies(keys, downLoadSize);
             }
@@ -176,6 +183,9 @@ public class HotUpdateSystem : MonoBehaviour
             hotUpdateWindow.UpdateDownloadedProgress(downloadHandle.GetDownloadStatus().Percent );
             yield return null;
         }
+        //！注意：如果下载速度过快，可能导致还没有进行分发下载进度的ui变化，所以加下面这个1
+        hotUpdateWindow?.UpdateDownloadedProgress(1);
+
         Debug.Log("热更完成");
 
     }
@@ -282,15 +292,13 @@ public class HotUpdateSystem : MonoBehaviour
     /// <summary>
     /// 最后跳转到游戏场景前：需要考虑做的事情！
     /// </summary>
-    private IEnumerator JumpToGameScene()
+    private void JumpToGameScene()
     {
 
         if (hotUpdateWindow != null)
         {
-            //延迟两秒后再关
-            //
-            yield return new WaitForSeconds(2f); // 等待2秒
-
+            //延迟两秒后再关（不需要这个了，因为设置了假的加载进度条为蓄满1，在DownLoadDependencies方法的hotUpdateWindow?.UpdateDownloadedProgress(1);
+            //yield return new WaitForSeconds(2f); // 等待2秒
 
             //hotUpdateWindow转换成MonoBehaviour或者更上层的Component，因为他一定个组件
             Addressables.Release(((Component)hotUpdateWindow).gameObject);

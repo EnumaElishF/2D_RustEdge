@@ -7,17 +7,19 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
-using System.Reflection;
-using System.Linq;
-using System.Data.SqlTypes;
 public class HotUpdateSystem : MonoBehaviour
 {
     public const string DllConfigKey = "DllConfig";
     public const string hotUpdateWindowKey = "HotUpdateWindow";
+    public const string hotUpdateAnnouncementKey = "HotUpdateAnnouncement";
+    public const string announcementKey = "Announcement";
+
+
     private IHotUpdateWindow hotUpdateWindow;
     private DllConfig dllConfig;
     //持久化目录的路径
     private string persistentDataPath_addressables => $"{Application.persistentDataPath}/com.unity.addressables";
+    //catalog_1.0.json注意这个名称，按自己的目录内部名称自行更改
     private string catalogPath => $"{persistentDataPath_addressables}/catalog_1.0.json";
     //HashSet存已经加载过的dll的名称。防止多塞进去
     private HashSet<string> loadedDlls = new HashSet<string>();
@@ -59,7 +61,7 @@ public class HotUpdateSystem : MonoBehaviour
         {
 
             //跳转到游戏场景，方式一
-            JumpToGameScene();
+            GameLaunch();
             //yield return StartCoroutine(JumpToGameScene());
 
             //跳转到游戏场景，方式二
@@ -112,7 +114,6 @@ public class HotUpdateSystem : MonoBehaviour
         }
         else
         {
-            yield return PriorityHotUpdate();
 
             Debug.Log($"updateCatalogs成功");
             List<IResourceLocator> locatorList =  updateCatalogsHandle.Result;
@@ -146,8 +147,11 @@ public class HotUpdateSystem : MonoBehaviour
             long downLoadSize = sizeHandle.Result;
             if (downLoadSize > 0)
             {
+                //先做优先热更
+                yield return PriorityHotUpdate();
+
                 //Show的Action onEnd直接跳转走到游戏场景
-                hotUpdateWindow.Show(downLoadSize,JumpToGameScene);
+                hotUpdateWindow.Show(downLoadSize,GameLaunch);
 
                 yield return DownLoadDependencies(keys, downLoadSize);
             }
@@ -241,7 +245,7 @@ public class HotUpdateSystem : MonoBehaviour
     /// <summary>
     /// 加载AOT程序集元数据
     /// </summary>
-    public  void LoadMetadataForAOTAssembly()
+    private  void LoadMetadataForAOTAssembly()
     {
         //不在Editor下运行
 #if UNITY_EDITOR
@@ -269,6 +273,12 @@ public class HotUpdateSystem : MonoBehaviour
 #if UNITY_EDITOR
         return;
 #endif
+
+        if (dllConfig == null) //避免原本没有加载过优先热更
+        {
+            //如果执行漏掉了dllConfig，那就重新获取一次
+            dllConfig = Addressables.LoadAssetAsync<DllConfig>(DllConfigKey).WaitForCompletion();
+        }
         //加载优先热更程序集
         foreach (string dllName in dllConfig.priorityHotUpdate)
         {
@@ -292,7 +302,7 @@ public class HotUpdateSystem : MonoBehaviour
     /// <summary>
     /// 最后跳转到游戏场景前：需要考虑做的事情！
     /// </summary>
-    private void JumpToGameScene()
+    private void GameLaunch()
     {
 
         if (hotUpdateWindow != null)
@@ -311,5 +321,10 @@ public class HotUpdateSystem : MonoBehaviour
 
         //热更完成可以去跳转到需要的场景
         //SceneManager.LoadScene("Game");
+
+        //热更完成，实例化游戏公告
+        //游戏公告: hotUpdateAnnouncement作为来自AssetBundle的游戏物体，所以他的组件(脚本)才不会丢
+        Addressables.InstantiateAsync(announcementKey).WaitForCompletion();
+
     }
 }

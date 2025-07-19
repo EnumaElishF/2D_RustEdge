@@ -9,6 +9,7 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
+using UnityEditor.AddressableAssets.Build;
 
 public static class Build 
 {
@@ -86,7 +87,7 @@ public static class Build
 
 
     /// <summary>
-    /// 客户端构建
+    /// 客户端构建：一键打包，也就是Build出exe之前所需要准备的事情
     /// </summary>
     [MenuItem("Build/NewClient")]
     public static void NewClient()
@@ -107,9 +108,29 @@ public static class Build
         {
             scenes = scenes,
             target = EditorUserBuildSettings.activeBuildTarget,
-            locationPathName = buildPath
+            locationPathName = buildPath,
+            options = BuildOptions.Development | BuildOptions.AllowDebugging
         };
         BuildPipeline.BuildPlayer(buildPlayerOptions);
         Debug.Log("完成客户端构建。构建路径buildPath:"+ buildPath);
+    }
+
+    /// <summary>
+    /// 一键更新包：也就是进行Update A Previous Build这个选项，所需要准备的事情
+    /// </summary>
+    [MenuItem("Build/UpdateClient")]
+    public static void UpdateClient()
+    {
+        //关于文件搬运的
+        //(1)调用HybridCLR的生成命令
+        PrebuildCommand.GenerateAll();
+        //(2)生成并搬迁dll文件,同时设置到Addressables中去
+        GenerateDllFiles();
+
+        string path = ContentUpdateScript.GetContentStateDataPath(false);//这里如果不填false那就会弹窗手动选择
+        AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+        ContentUpdateScript.BuildContentUpdate(settings, path);
+        Debug.Log("完成客户端更新");
+
     }
 }

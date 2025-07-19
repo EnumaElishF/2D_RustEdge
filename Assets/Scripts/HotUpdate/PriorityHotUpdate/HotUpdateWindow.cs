@@ -9,6 +9,9 @@ public class HotUpdateWindow : MonoBehaviour,IHotUpdateWindow
     public Image progressBarFill;
     public Text progressText;
     public float updateSpeed = 0.5f;
+    [Header("版本更新提示文本")]
+    public Text versionText;
+
 
     private long totalBytes;
     private float currentProgress;
@@ -19,6 +22,13 @@ public class HotUpdateWindow : MonoBehaviour,IHotUpdateWindow
         gameObject.SetActive(true);
         this.totalBytes = totalBytes;
         this.onEnd = onEnd;
+
+        // 设置公告文本内容
+        if (versionText != null)
+        {
+            //versionText.text = "版本更新过程中,请不要关闭游戏。请稍后，即将开始游戏。";
+            versionText.text = "健康游戏声明: 抵制不良游戏，拒绝盗版游戏。 注意自我保护，谨防受骗上当。 适度游戏益脑，沉迷游戏伤身。 合理安排时间，享受健康生活。";
+        }
     }
     public void UpdateDownloadedProgress(float progress)
     {

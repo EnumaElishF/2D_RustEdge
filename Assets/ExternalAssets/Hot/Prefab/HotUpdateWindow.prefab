@@ -356,6 +356,7 @@ MonoBehaviour:
   progressBarFill: {fileID: 4595419060866074000}
   progressText: {fileID: 907815178643152531}
   updateSpeed: 0.5
+  versionText: {fileID: 1690041294417126855}
 --- !u!1 &8982776936661782295
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +497,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7418758731492722246, guid: b891eb7b65b1f8148a6d1be72681ef5b, type: 3}
+  m_Sprite: {fileID: -5855441243399102754, guid: 8e73ca6c8437f6942a873087c99b8bca, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

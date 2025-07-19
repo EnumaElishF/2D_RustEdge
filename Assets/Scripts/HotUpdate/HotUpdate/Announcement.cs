@@ -10,7 +10,8 @@ public class Announcement : MonoBehaviour
         // 设置公告文本内容
         if (text != null)
         {
-            text.text = "本次版本更新的内容是雨天效果: 雨天效果分为无害的雨和对人体有害的黑雨";
+            text.text = "本次版本更新的内容是雨天效果: 雨滴分为小雨和暴雨";
+            //text.text = "本次版本更新的内容是雨天效果: 雨天效果分为无害的雨和对人体有害的黑雨";
         }
     }
     public void CloseAnnouncement()

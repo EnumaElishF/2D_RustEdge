@@ -7,6 +7,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
+//HotUpdateSystem作为AOT程序集的内容，不允许热更新。代码更新后，删掉Builds再重新打包。
 public class HotUpdateSystem : MonoBehaviour
 {
     public const string DllConfigKey = "DllConfig";
@@ -19,7 +20,7 @@ public class HotUpdateSystem : MonoBehaviour
     private DllConfig dllConfig;
     //持久化目录的路径
     private string persistentDataPath_addressables => $"{Application.persistentDataPath}/com.unity.addressables";
-    //catalog_1.0.json注意这个名称，按自己的目录内部名称自行更改
+    //catalog_1.0.json注意这个名称，按自己的目录内部名称自行更改, （确定，自己的项目catalog_1.0.json是正确的）  2D\RustEdge\ServerData\StandaloneWindows64
     private string catalogPath => $"{persistentDataPath_addressables}/catalog_1.0.json";
     //HashSet存已经加载过的dll的名称。防止多塞进去
     private HashSet<string> loadedDlls = new HashSet<string>();
@@ -187,11 +188,25 @@ public class HotUpdateSystem : MonoBehaviour
             hotUpdateWindow.UpdateDownloadedProgress(downloadHandle.GetDownloadStatus().Percent );
             yield return null;
         }
+
+
+        // 下载完成后，强制刷新缓存（关键：确保资源写入磁盘）{解决HotUpdate部分的公告使用bug问题，必须开启}
+        if (downloadHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            Debug.Log("下载完成，开始刷新缓存...");
+            //Addressables 下载资源后，可能存在异步写入磁盘的延迟（尤其是大文件）。需在下载完成后强制刷新缓存，并重新加载 Catalog，确保资源定位信息同步。
+            // 刷新Catalog，确保资源定位信息同步
+            ReloadContentCatalog();
+            // 额外等待1帧，确保缓存写入完成（应对磁盘IO延迟）
+            yield return null;
+        }
+
         //！注意：如果下载速度过快，可能导致还没有进行分发下载进度的ui变化，所以加下面这个1
         hotUpdateWindow?.UpdateDownloadedProgress(1);
 
         Debug.Log("热更完成");
 
+        Addressables.Release(downloadHandle);
     }
 
     //优先热更新
@@ -236,16 +251,38 @@ public class HotUpdateSystem : MonoBehaviour
         }
         Addressables.Release(dllTextAsset);
     }
-
+ 
     private void ReloadContentCatalog()
     {
         Addressables.LoadContentCatalogAsync(catalogPath).WaitForCompletion();
     }
 
     /// <summary>
+    /// 增加Catalog替换器：确保 Catalog 在热更新后被正确重载{非必要不需要开启}
+    /// </summary>
+    //private void ReloadContentCatalog()
+    //{
+    //    if (File.Exists(catalogPath))
+    //    {
+    //        // 强制加载最新Catalog，并替换旧的定位器
+    //        var catalogOp = Addressables.LoadContentCatalogAsync(catalogPath, true); // 第二个参数true表示替换旧Catalog
+    //        catalogOp.WaitForCompletion();
+    //        if (catalogOp.Status != AsyncOperationStatus.Succeeded)
+    //        {
+    //            Debug.LogError($"重新加载Catalog失败：{catalogOp.OperationException}");
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("Catalog已成功重载，资源定位信息更新");
+    //        }
+    //        Addressables.Release(catalogOp);
+    //    }
+    //}
+
+    /// <summary>
     /// 加载AOT程序集元数据
     /// </summary>
-    private  void LoadMetadataForAOTAssembly()
+    private void LoadMetadataForAOTAssembly()
     {
         //不在Editor下运行
 #if UNITY_EDITOR
@@ -322,9 +359,54 @@ public class HotUpdateSystem : MonoBehaviour
         //热更完成可以去跳转到需要的场景
         //SceneManager.LoadScene("Game");
 
+
+        // 再次刷新Catalog，确保资源定位信息同步（看这个能不能解决bug）
+        //ReloadContentCatalog();
+
         //热更完成，实例化游戏公告
         //游戏公告: hotUpdateAnnouncement作为来自AssetBundle的游戏物体，所以他的组件(脚本)才不会丢
         Addressables.InstantiateAsync(announcementKey).WaitForCompletion();
 
+
+        // 关键修改：实例化前强制检查并重试加载Announcement
+        //InstantiateAnnouncementWithRetry();
+
     }
+
+    /// <summary>
+    /// 带重试机制的Announcement公告实例化（应对缓存延迟）{非必要不需要开启}
+    /// </summary>
+    private void InstantiateAnnouncementWithRetry()
+    {
+        const int maxRetry = 3; // 最多重试3次，直到报错，或者某一次成功
+        const float retryDelay = 0.5f; // 每次重试间隔0.5秒
+
+        for (int i = 0; i < maxRetry; i++)
+        {
+            // 1. 检查资源是否已在缓存中
+            var checkOp = Addressables.LoadAssetAsync<GameObject>(announcementKey);
+            checkOp.WaitForCompletion();
+
+            if (checkOp.Status == AsyncOperationStatus.Succeeded && checkOp.Result != null)
+            {
+                // 资源可用，直接实例化
+                Addressables.Release(checkOp); // 释放检查句柄
+                Addressables.InstantiateAsync(announcementKey).WaitForCompletion();
+
+                //成功就直接return
+                return;
+            }
+
+            // 2. 资源未就绪，等待缓存写入后重试
+            Addressables.Release(checkOp);
+            Debug.Log($"Announcement加载重试 {i + 1}/{maxRetry}...");
+            System.Threading.Thread.Sleep((int)(retryDelay * 1000)); // 等待0.5秒
+        }
+
+        // 重试失败后报错（避免崩溃）
+        Debug.LogError($"Announcement加载失败，已重试{maxRetry}次");
+    }
+
+
+
 }

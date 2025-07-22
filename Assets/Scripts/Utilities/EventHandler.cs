@@ -250,4 +250,14 @@ public static class EventHandler
     {
         EndGameEvent?.Invoke();
     }
+
+    /// <summary>
+    /// 天气事件
+    /// </summary>
+    public static event Action<Weather, SoundName,bool> WeatherEvent;
+    public static void CallWeatherEvent(Weather weather, SoundName soundName,bool weatherActive)
+    {
+        WeatherEvent?.Invoke(weather,soundName, weatherActive);
+    }
+
 }

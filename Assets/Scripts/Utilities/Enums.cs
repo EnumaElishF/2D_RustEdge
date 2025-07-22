@@ -82,5 +82,13 @@ public enum SoundName
     none, FootStepSoft, FootStepHard,
     Axe, Pickaxe, Hoe, Reap, Water, Basket,
     Pickup, Plant, TreeFalling, Rustle,
-    AmbientCountryside1, AmbientCountryside2, MusicCalm1, MusicCalm2, MusicCalm3, MusicCalm4, MusicCalm5, MusicCalm6, AmbientIndoor1
+    AmbientCountryside1, AmbientCountryside2, MusicCalm1, MusicCalm2, MusicCalm3, MusicCalm4, MusicCalm5, MusicCalm6, AmbientIndoor1,RainThunders
+}
+
+/// <summary>
+/// ÌìÆø
+/// </summary>
+public enum Weather
+{
+    None, Rainy, Snowy, Windy
 }

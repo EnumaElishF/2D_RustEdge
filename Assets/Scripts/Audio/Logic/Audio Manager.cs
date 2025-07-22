@@ -29,12 +29,14 @@ public class AudioManager : Singleton<AudioManager>
         EventHandler.AfterSceneLoadedEvent += OnAfterSceneLoadedEvent;
         EventHandler.PlaySoundEvent += OnPlaySoundEvent;
         EventHandler.EndGameEvent += OnEndGameEvent;
+        EventHandler.WeatherEvent += OnWeatherEvent;
     }
     private void OnDisable()
     {
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
         EventHandler.PlaySoundEvent -= OnPlaySoundEvent;
         EventHandler.EndGameEvent -= OnEndGameEvent;
+        EventHandler.WeatherEvent -= OnWeatherEvent;
 
     }
 
@@ -77,6 +79,28 @@ public class AudioManager : Singleton<AudioManager>
         //播放音效
         soundRoutine = StartCoroutine(PlaySoundRoutine(music, ambient));
 
+    }
+    /// <summary>
+    /// 天气音效
+    /// </summary>
+    private void OnWeatherEvent(Weather weather, SoundName soundName, bool weatherActive)
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+        SceneSoundItem sceneSound = sceneSoundData.GetSceneSoundItem(currentScene);
+        if (weatherActive)
+        {
+            SoundDetails ambient = soundDetailsData.GetSoundDetails(soundName); 
+            SoundDetails music = soundDetailsData.GetSoundDetails(sceneSound.ambient);
+
+            if (soundRoutine != null) //协程如果不为空，那么就把他停掉，把之前播放的音效停掉
+                StopCoroutine(soundRoutine);
+            //播放音效
+            soundRoutine = StartCoroutine(PlaySoundRoutine(music, ambient));
+        }
+        else
+        {
+            OnAfterSceneLoadedEvent();
+        }
     }
     /// <summary>
     /// 通过协程让我们的背景音乐等待一段随机时间，再去播放，一开始只播放环境音效

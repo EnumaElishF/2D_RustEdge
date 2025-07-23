@@ -15,10 +15,10 @@ MonoBehaviour:
   weatherDetailsList:
   - weather: 1
     soundName: 22
-    hourStart: 8
+    hourStart: 12
     minuteStart: 5
     dayStart: 1
-    hourEnd: 10
+    hourEnd: 14
     minuteEnd: 0
     dayEnd: 1
     priority: 0

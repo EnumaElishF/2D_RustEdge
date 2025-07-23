@@ -12,6 +12,7 @@ public class AudioManager : Singleton<AudioManager>
     public AudioSource gameSource;
 
     private Coroutine soundRoutine;
+    private Coroutine fadeRoutine; // 新增：用于控制音量渐变的协程
 
     [Header("Audio Mixer")]
     public AudioMixer audioMixer;
@@ -20,9 +21,11 @@ public class AudioManager : Singleton<AudioManager>
     public AudioMixerSnapshot normalSnapShot;
     public AudioMixerSnapshot ambientSnapShot;
     public AudioMixerSnapshot muteSnapShot; //Mute的时候，直接把Master关掉就没有声音了
-    private float musicTransitionSecond = 8f;
 
-    public float MusicStartSecond => Random.Range(5f, 15f);
+    private float musicTransitionSecond = 3f;
+    private float volumeFadeDuration = 2f; // 音量渐变持续时间
+
+    public float MusicStartSecond => Random.Range(0f, 1f);
 
     private void OnEnable()
     {
@@ -45,6 +48,10 @@ public class AudioManager : Singleton<AudioManager>
         if (soundRoutine != null)
         {
             StopCoroutine(soundRoutine); //关闭协程soundRoutine
+        }
+        if (fadeRoutine != null) // 停止音量渐变协程
+        {
+            StopCoroutine(fadeRoutine);
         }
         muteSnapShot.TransitionTo(1f); //在1f内过渡到静音
     }
@@ -85,23 +92,66 @@ public class AudioManager : Singleton<AudioManager>
     /// </summary>
     private void OnWeatherEvent(Weather weather, SoundName soundName, bool weatherActive)
     {
+        //加入在切换音乐前先逐渐减小之前的音乐的音量
         string currentScene = SceneManager.GetActiveScene().name;
         SceneSoundItem sceneSound = sceneSoundData.GetSceneSoundItem(currentScene);
-        if (weatherActive)
-        {
-            SoundDetails ambient = soundDetailsData.GetSoundDetails(soundName); 
-            SoundDetails music = soundDetailsData.GetSoundDetails(sceneSound.ambient);
+        if (sceneSound == null)
+            return;
 
-            if (soundRoutine != null) //协程如果不为空，那么就把他停掉，把之前播放的音效停掉
-                StopCoroutine(soundRoutine);
-            //播放音效
-            soundRoutine = StartCoroutine(PlaySoundRoutine(music, ambient));
-        }
-        else
+        // 停止任何正在进行的渐变协程
+        if (fadeRoutine != null)
         {
-            OnAfterSceneLoadedEvent();
+            StopCoroutine(fadeRoutine);
         }
+
+        // 获取当前播放的音乐和环境音效
+        SoundDetails currentAmbient = soundDetailsData.GetSoundDetails(sceneSound.ambient);
+        SoundDetails targetMusic = weatherActive ?
+            soundDetailsData.GetSoundDetails(soundName) :
+            soundDetailsData.GetSoundDetails(sceneSound.music);
+
+        // 开始音量渐变协程，完成后切换音乐
+        fadeRoutine = StartCoroutine(FadeVolumeAndSwitchMusic(currentAmbient, targetMusic, weatherActive));
+
     }
+
+    /// <summary>
+    /// 音量渐变并切换音乐的协程
+    /// </summary>
+    private IEnumerator FadeVolumeAndSwitchMusic(SoundDetails ambient, SoundDetails targetMusic, bool weatherActive)
+    {
+        // 保存当前音量设置
+        float originalMusicVolume;
+        float originalAmbientVolume;
+        audioMixer.GetFloat("MusicVolume", out originalMusicVolume);
+        audioMixer.GetFloat("AmbientVolume", out originalAmbientVolume);
+
+        // 逐渐降低当前音乐音量
+        float elapsedTime = 0f;
+        while (elapsedTime < volumeFadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / volumeFadeDuration;
+
+            // 音乐音量从原始值降到最低
+            audioMixer.SetFloat("MusicVolume", Mathf.Lerp(originalMusicVolume, -80, t));
+
+            yield return null;
+        }
+
+        // 停止当前的音效协程
+        if (soundRoutine != null)
+        {
+            StopCoroutine(soundRoutine);
+        }
+
+        // 播放新的音乐
+        soundRoutine = StartCoroutine(PlaySoundRoutine(targetMusic, ambient));
+
+        // 重置渐变协程引用
+        fadeRoutine = null;
+    }
+
     /// <summary>
     /// 通过协程让我们的背景音乐等待一段随机时间，再去播放，一开始只播放环境音效
     /// 音效过渡！
@@ -114,9 +164,11 @@ public class AudioManager : Singleton<AudioManager>
         if(music!=null && ambient!= null)
         {
             PlayAmbientClip(ambient,1f); //1秒就切换到AmbientOnly，这样就立马暂停了Music
-            //随机暂停协程的时间，协程等待MusicStartSecond秒
+
+            //随机暂停协程的时间，协程等待MusicStartSecond秒。在此期间音乐不开启
             yield return new WaitForSeconds(MusicStartSecond);
-            //暂停结束后，执行背景音乐，经过几秒缓慢从-80，涨到指定的音量
+
+            //暂停结束后，执行主音乐，经过几秒缓慢从-80，涨到指定的音量。控制等待参数的随机时间参数：要求MusicStartSecond与天气特效开始的时间对应：目前统一到musicTransitionSecond = 10s
             PlayMusicClip(music,musicTransitionSecond);
         }
     }
@@ -153,9 +205,32 @@ public class AudioManager : Singleton<AudioManager>
     {
         return (amount * 100 - 80);
     }
-    public void SetMastetVolume(float value)
+    /// <summary>
+    /// 设置音量
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetMasterVolume(float value)
     {
         //给一个-80到+20的值给到MasterVolume
         audioMixer.SetFloat("MasterVolume", (value * 100 - 80));
     }
+    /// <summary>
+    /// 获取音量
+    /// </summary>
+    /// <returns></returns>
+    public float GetMasterVolume()
+    {
+        float currentVolume;
+        // 尝试获取混音器中的MasterVolume值
+        if (audioMixer.GetFloat("MasterVolume", out currentVolume))
+        {
+            // 将混音器的音量值(-80到20)转换回原始音量范围(0到1)
+            // 对应ConvertSoundVolume方法的反向计算
+            return (currentVolume + 80) / 100f;
+        }
+        // 如果获取失败，返回默认值0
+        return 0f;
+    }
+
+
 }

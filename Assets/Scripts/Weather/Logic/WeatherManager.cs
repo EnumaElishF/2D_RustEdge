@@ -9,14 +9,21 @@ public class WeatherManager : Singleton<WeatherManager>
     public WeatherDataList_SO weatherDataList_SO;
     public GameObject weatherInPlayer;
 
-    private bool inHouseScene = false;
-    private bool isSceneLoaded = false; // 场景是否加载完成
+    [Header("天气粒子程度")]
+    public int small;
+    public int medium;
+    public int large;
 
-    // 新增：记录上一次的状态用于比较
+    private bool inHouseScene = false;
+    private bool isSceneLoaded = false;
+
+    // 记录状态用于比较和恢复
     private Weather lastWeather = Weather.None;
     private bool lastInHouseScene = false;
+    // 保存每个粒子系统的当前速率，使用InstanceID作为键
+    private Dictionary<int, float> particleRates = new Dictionary<int, float>();
 
-    Weather currentWeather = Weather.None;//初始天气为None
+    Weather currentWeather = Weather.None;
     SoundName soundName = SoundName.none;
 
     private void OnEnable()
@@ -25,156 +32,302 @@ public class WeatherManager : Singleton<WeatherManager>
         EventHandler.GameMinuteEvent += OnGameMinuteEvent;
     }
 
-
-
     private void OnDisable()
     {
         EventHandler.AfterSceneLoadedEvent -= OnAfterSceneLoadedEvent;
         EventHandler.GameMinuteEvent -= OnGameMinuteEvent;
-
-
     }
-
 
     private void OnAfterSceneLoadedEvent()
     {
         string currentScene = SceneManager.GetActiveScene().name;
         bool newInHouseScene = currentScene == "02Home";
 
-        // 场景切换时，根据是否在室内重置当前天气
-        if (newInHouseScene)
+        if (newInHouseScene != inHouseScene)
         {
-            currentWeather = Weather.None; // 室内默认无天气
-            soundName = SoundName.none;
-        }
-        else
-        {
-            // 室外需要重新计算天气（后续由GameMinuteEvent触发）
-            currentWeather = Weather.None;
-            soundName = SoundName.none;
+            inHouseScene = newInHouseScene;
+
+            DirectUpdateWeatherEffects();
         }
 
-        inHouseScene = newInHouseScene;
         isSceneLoaded = true;
-
-        // 检查更新
-        CheckAndUpdateWeather(currentWeather, soundName);
+        lastInHouseScene = inHouseScene;
     }
 
     private void OnGameMinuteEvent(int minute, int hour, int day, Season season)
     {
-        // 空引用保护
         if (weatherDataList_SO == null || weatherDataList_SO.weatherDetailsList == null)
         {
-            Debug.LogError("未获取到天气数据weatherDataList_SO:"+ weatherDataList_SO);
+            Debug.LogError("未获取到天气数据weatherDataList_SO");
             return;
         }
 
-        int currentTime = hour * 100 + minute; // 转换为时分整数（如9:30 → 930）
-        currentWeather = Weather.None; // 先默认重置为无天气
-        soundName = SoundName.none;
+        int currentTime = hour * 100 + minute;
+        Weather newWeather = Weather.None;
+        SoundName newSoundName = SoundName.none;
 
-
+        //检查更新
         if (!inHouseScene)
         {
-            bool haveWeather = false;
-            // 遍历所有天气数据
             foreach (WeatherDetails weatherData in weatherDataList_SO.weatherDetailsList)
             {
-                // 1. 检查季节是否匹配
-                if (weatherData.season != season)
-                    continue;
+                if (weatherData.season != season) continue;
+                if (day < weatherData.dayStart || day > weatherData.dayEnd) continue;
 
-                // 2. 检查日期是否在开始和结束范围之间（包含首尾）
-                if (day < weatherData.dayStart || day > weatherData.dayEnd)
-                    continue;
-
-                // 3. 计算开始和结束时间的整数表示
                 int startTime = weatherData.hourStart * 100 + weatherData.minuteStart;
                 int endTime = weatherData.hourEnd * 100 + weatherData.minuteEnd;
 
-                // 4. 检查当前时间是否在时间范围内
-                bool isTimeInRange;
-                if (startTime <= endTime)
+                bool isTimeInRange = startTime <= endTime
+                    ? currentTime >= startTime && currentTime <= endTime
+                    : currentTime >= startTime || currentTime <= endTime;
+
+                if (isTimeInRange)
                 {
-                    // 正常情况：开始时间 <= 结束时间（如8:00-18:00）
-                    isTimeInRange = currentTime >= startTime && currentTime <= endTime;
+                    newWeather = weatherData.weather;
+                    newSoundName = weatherData.soundName;
+                    break;
                 }
-                else
-                {
-                    // 跨天情况：开始时间 > 结束时间（如22:00-06:00）
-                    isTimeInRange = currentTime >= startTime || currentTime <= endTime;
-                }
-
-                if (!isTimeInRange)
-                    continue;
-
-                currentWeather = weatherData.weather;
-                soundName = weatherData.soundName;
-
-                haveWeather = true;
-
-                //Debug.Log("天气时间得到:当前时间 分钟" + minute + "小时" + hour + "day" + day + "Season" + season + "currentWeather" + currentWeather);
-
             }
-
         }
 
-        // 检查是否需要更新天气
-        CheckAndUpdateWeather(currentWeather, soundName);
-
-    }
-
-
-    /// <summary>
-    /// 检查并更新天气（仅在状态变化时执行）
-    /// </summary>
-    private void CheckAndUpdateWeather(Weather checkCurrentWeather = Weather.None, SoundName checkSoundName = SoundName.none)
-    {
-        // 判断是否需要更新：天气变化 或 屋内屋外状态变化
-        bool needUpdate = checkCurrentWeather != lastWeather || inHouseScene != lastInHouseScene;
-        Debug.Log("判断是否需要更新needUpdate:" + needUpdate);
-        if (needUpdate && isSceneLoaded)
+        //只有在天气发生改变时，才会运行
+        if (!inHouseScene && newWeather != currentWeather)
         {
-            Debug.Log("天气变化成功"+ checkCurrentWeather);
+            currentWeather = newWeather;
+            soundName = newSoundName;
+            UpdateWeatherWithTransition();
 
-            UpdateWeatherEffects(checkCurrentWeather);
-
-            if (checkCurrentWeather != Weather.None && !inHouseScene)
-            {
-                Debug.Log("进入雨天");
-                EventHandler.CallWeatherEvent(checkCurrentWeather, checkSoundName, true);
-            }
-            else
+            if (currentWeather == Weather.None)
             {
                 EventHandler.CallWeatherEvent(Weather.None, SoundName.none, false);
             }
+            else
+            {
+                EventHandler.CallWeatherEvent(currentWeather, soundName, true);
+            }
 
-            // 更新记录的状态为当前状态
-            lastWeather = currentWeather;
         }
-        //无论是否更新，都同步屋内状态（避免残留旧值）
-        lastInHouseScene = inHouseScene;
+        //检查并重置音效
+        if (isSceneLoaded && currentWeather != Weather.None)
+        {
+            Debug.Log("重置音效");
+            isSceneLoaded = false;//只有在切换到新场景才会为true
+            EventHandler.CallWeatherEvent(currentWeather, soundName, true);
+        }
+    }
+
+
+    private void UpdateWeatherWithTransition()
+    {
+        if (weatherInPlayer == null) return;
+
+        StopAllCoroutines();
+
+        foreach (Transform child in weatherInPlayer.transform)
+        {
+            bool isMatch = child.name.Equals(currentWeather.ToString(), System.StringComparison.OrdinalIgnoreCase);
+
+            SaveParticleRates(child);
+
+            if (currentWeather == Weather.None)
+            {
+                if (child.gameObject.activeSelf)
+                {
+                    // 获取所有子对象中的粒子系统
+                    ParticleSystem[] particles = child.GetComponentsInChildren<ParticleSystem>();
+                    if (particles.Length > 0)
+                    {
+                        // 使用第一个粒子系统的当前速率作为起始点
+                        float startRate = GetCurrentParticleRate(particles[0]);
+                        StartCoroutine(FadeParticleEmission(child, startRate, small, 10f, true));
+                    }
+                    else
+                    {
+                        child.gameObject.SetActive(false);
+                    }
+                }
+            }
+            else if (isMatch)
+            {
+                child.gameObject.SetActive(true);
+                StartCoroutine(FadeParticleEmission(child, small, large, 10f, false));
+            }
+            else
+            {
+                child.gameObject.SetActive(false);
+            }
+        }
+
+
+        lastWeather = currentWeather;
+    }
+
+    private void DirectUpdateWeatherEffects()
+    {
+        if (weatherInPlayer == null) return;
+
+        StopAllCoroutines();
+
+        foreach (Transform child in weatherInPlayer.transform)
+        {
+            bool isMatch = child.name.Equals(currentWeather.ToString(), System.StringComparison.OrdinalIgnoreCase);
+
+            if (inHouseScene)
+            {
+                SaveParticleRates(child);
+                child.gameObject.SetActive(false);
+            }
+            else
+            {
+                if (isMatch && currentWeather != Weather.None)
+                {
+                    child.gameObject.SetActive(true);
+                    Debug.Log("直接获取成功，还差粒子存储完成");
+                    RestoreParticleRates(child);
+                }
+                else
+                {
+                    child.gameObject.SetActive(false);
+                }
+            }
+        }
+
     }
 
     /// <summary>
-    /// 更新天气效果显示状态
+    /// 保存父对象下所有粒子系统的当前速率
     /// </summary>
-    private void UpdateWeatherEffects(Weather currentWeather)
+    private void SaveParticleRates(Transform parent)
     {
-        if (weatherInPlayer == null)
+        ParticleSystem[] particles = parent.GetComponentsInChildren<ParticleSystem>();
+        foreach (var particle in particles)
         {
-            Debug.LogError("未找到weatherInPlayer组件");
-        }
-        // 遍历所有天气效果子对象
-        foreach (Transform child in weatherInPlayer.transform)
-        {
-            // 检查子对象名称是否与当前天气匹配
-            bool isMatch = child.name.Equals(currentWeather.ToString(), System.StringComparison.OrdinalIgnoreCase);
+            int instanceId = particle.GetInstanceID();
+            float currentRate = particle.emission.rateOverTime.constant;
 
-            // 激活匹配的天气效果，禁用不匹配的
-            child.gameObject.SetActive(isMatch);
+            if (particleRates.ContainsKey(instanceId))
+                particleRates[instanceId] = currentRate;
+            else
+                particleRates.Add(instanceId, currentRate);
         }
     }
 
+    /// <summary>
+    /// 恢复父对象下所有粒子系统之前保存的速率
+    /// </summary>
+    private void RestoreParticleRates(Transform parent)
+    {
+        ParticleSystem[] particles = parent.GetComponentsInChildren<ParticleSystem>();
+        foreach (var particle in particles)
+        {
+            int instanceId = particle.GetInstanceID();
+
+            Debug.Log("粒子转换完成instanceId:" + instanceId);
+            if (particleRates.TryGetValue(instanceId, out float rate))
+            {
+                var emission = particle.emission;
+                var rateOverTime = emission.rateOverTime;
+                rateOverTime.constant = rate;
+                emission.rateOverTime = rateOverTime;
+            }
+            else
+            {
+                // 如果没有保存的速率，使用默认的large
+                var emission = particle.emission;
+                var rateOverTime = emission.rateOverTime;
+                rateOverTime.constant = large;
+                emission.rateOverTime = rateOverTime;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 获取粒子系统当前的发射速率
+    /// </summary>
+    private float GetCurrentParticleRate(ParticleSystem particle)
+    {
+        if (particle != null)
+        {
+            return particle.emission.rateOverTime.constant;
+        }
+        return small;
+    }
+
+    /// <summary>
+    /// 协程：平滑过渡所有子对象中粒子系统的发射速率
+    /// </summary>
+    private IEnumerator FadeParticleEmission(Transform parent, float startRate, float endRate, float duration, bool disableAtEnd)
+    {
+        float elapsedTime = 0f;
+        // 获取父对象下所有的粒子系统（包括子对象）
+        ParticleSystem[] particles = parent.GetComponentsInChildren<ParticleSystem>();
+
+        if (particles.Length == 0)
+        {
+            Debug.LogWarning($"在{parent.name}及其子对象下未找到粒子系统组件");
+            yield break;
+        }
+
+        // 保存原始的发射速率并设置初始速率
+        float[] originalRates = new float[particles.Length];
+        for (int i = 0; i < particles.Length; i++)
+        {
+            originalRates[i] = particles[i].emission.rateOverTime.constant;
+
+            var emission = particles[i].emission;
+            var rateOverTime = emission.rateOverTime;
+            rateOverTime.constant = startRate;
+            emission.rateOverTime = rateOverTime;
+        }
+
+        // 分阶段平滑过渡
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+
+            float currentRate;
+            if (t < 0.33f) // 第一阶段：0-33%
+            {
+                currentRate = Mathf.Lerp(startRate, medium, t / 0.33f);
+            }
+            else if (t < 0.66f) // 第二阶段：33%-66%
+            {
+                currentRate = Mathf.Lerp(medium, (medium + endRate) / 2, (t - 0.33f) / 0.33f);
+            }
+            else // 第三阶段：66%-100%
+            {
+                currentRate = Mathf.Lerp((medium + endRate) / 2, endRate, (t - 0.66f) / 0.34f);
+            }
+
+            // 更新所有粒子系统的发射速率
+            foreach (var particle in particles)
+            {
+                var emission = particle.emission;
+                var rateOverTime = emission.rateOverTime;
+                rateOverTime.constant = currentRate;
+                emission.rateOverTime = rateOverTime;
+            }
+
+            yield return null;
+        }
+
+        // 确保最终值准确
+        foreach (var particle in particles)
+        {
+            var emission = particle.emission;
+            var rateOverTime = emission.rateOverTime;
+            rateOverTime.constant = endRate;
+            emission.rateOverTime = rateOverTime;
+        }
+
+        // 保存最终速率
+        SaveParticleRates(parent);
+
+        // 过渡结束后禁用（如果需要）
+        if (disableAtEnd)
+        {
+            parent.gameObject.SetActive(false);
+        }
+    }
 }

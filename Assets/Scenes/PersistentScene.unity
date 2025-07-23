@@ -9926,6 +9926,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weatherDataList_SO: {fileID: 11400000, guid: 9521432ed4264b74da16a49bbdde360f, type: 2}
   weatherInPlayer: {fileID: 1474176169}
+  small: 1
+  medium: 5
+  large: 35
 --- !u!1 &1508132543
 GameObject:
   m_ObjectHideFlags: 0
@@ -11554,7 +11557,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 25
+      scalar: 35
       minScalar: 10
       maxCurve:
         serializedVersion: 2
